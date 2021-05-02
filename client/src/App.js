@@ -1,6 +1,7 @@
 import React, { useState, useEffect } 	from 'react';
 import Homescreen 		from './components/homescreen/Homescreen';
 import MapsScreen       from './components/maps/MapsScreen';
+import SpreadSheet       from './components/spreadsheet/SpreadSheet';
 import { useQuery } 	from '@apollo/client';
 import * as queries 	from './cache/queries';
 import { jsTPS } 		from './utils/jsTPS';
@@ -108,7 +109,7 @@ const App = () => {
 				</WNavbar>
 			</WLHeader>
 		<BrowserRouter>
-			{auth && <Redirect to="/maps" />}
+			{auth && <Redirect to="/spreadsheet" />}
 			{auth === false && <Redirect to={ {pathname: "/home"} } />}
 			<Switch>
 				<Redirect exact from="/" to={ {pathname: "/home"} } />
@@ -134,7 +135,7 @@ const App = () => {
 					path="/spreadsheet" 
 					name="spreadsheet" 
 					render={() => 
-						<MapsScreen tps={transactionStack} 
+						<SpreadSheet tps={transactionStack} 
 						fetchUser={refetch} user={user} 
 						maps={maps} setMaps={setMaps} 
 						activeMap={activeMap} setActiveMap={setActiveMap} handleSetActiveMap={handleSetActiveMap}/>

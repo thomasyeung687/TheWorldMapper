@@ -33,6 +33,21 @@ export const GET_DB_MAP_BY_ID = gql`
 	}
 `;
 
+export const GET_DB_REGION_BY_ID = gql`
+	query GetDBRegionById {
+		getRegionById {
+			_id
+			owner
+			name
+			capital
+			leader
+			landmarks
+			parentRegion
+			subregions
+		}
+	}
+`;
+
 // export const GET_DB_TODOS = gql`
 // 	query GetDBTodos {
 // 		getAllTodos {

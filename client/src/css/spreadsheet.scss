@@ -1,0 +1,66 @@
+.mainContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: #272727;
+  justify-content: center;
+  align-items: center;
+}
+.SSContainer {
+  width: 75%;
+  height: 80%;
+  // background-color: blue;
+  display: flex;
+  flex-direction: column;
+}
+.yourMapsContainerHeader {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+}
+.SSMainContent {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background-color: #c2c2c3;
+
+  overflow-y: scroll;
+  scrollbar-width: thin;
+
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
+}
+
+.SS-header-section {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  padding-top: 24px;
+  padding-bottom: 12px;
+  justify-content: center;
+
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+}
+
+.SS-header-section:hover {
+  transition: 0.1s ease-in-out;
+  cursor: pointer;
+  background-color: silver;
+}
+
+.SS-header-button {
+  padding: 0;
+}
+
+.SStable-header0 {
+}
+
+.SStable-header {
+  background-color: #c72e34;
+}

@@ -6,6 +6,10 @@ const regionSchema = new Schema(
 			type: ObjectId,
 			required: true
 		},
+		isMap:{
+			type: Boolean,
+			required: true
+		},
 		owner: {
 			type: String,
 			required: true
@@ -22,7 +26,8 @@ const regionSchema = new Schema(
 			type: String,
 			required: true
 		},
-		subregions: [ObjectId],
+		parentRegion: String,
+		subregions: [String],
 		landmarks: [String]
 	},
 	{ timestamps: true }
