@@ -1,13 +1,16 @@
 import React, { useState } 	from 'react';
-import { REGISTER }			from '../../cache/mutations';
+import { UPDATE }			from '../../cache/mutations';
 import { useMutation }    	from '@apollo/client';
 
 import { WModal, WMHeader, WMMain, WMFooter, WButton, WInput, WRow, WCol } from 'wt-frontend';
 
-const CreateAccount = (props) => {
-	const [input, setInput] = useState({ email: '', password: '', firstName: '', lastName: '' });
+const UpdateAccount = (props) => {
+	const [input, setInput] = useState({ _id: props.user._id, email: props.user.email, password: props.user.password, firstName: props.user.firstName, lastName: props.user.lastName });
 	const [loading, toggleLoading] = useState(false);
-	const [Register] = useMutation(REGISTER);
+	const [Update] = useMutation(UPDATE);
+
+    console.log(input.email)
+    console.log(props.user)
 
 	
 	const updateInput = (e) => {
@@ -16,34 +19,34 @@ const CreateAccount = (props) => {
 		setInput(updated);
 	};
 
-	const handleCreateAccount = async (e) => {
+	const handleUpdateAccount = async (e) => {
 		for (let field in input) {
 			if (!input[field]) {
-				alert('All fields must be filled out to register');
+				alert('All fields must be filled out to update account!');
 				return;
 			}
 		}
-		const { loading, error, data } = await Register({ variables: { ...input } });
+		const { loading, error, data } = await Update({ variables: { ...input } });
 		if (loading) { toggleLoading(true) };
 		if (error) { return `Error: ${error.message}` };
 		if (data) {
 			console.log(data)
 			toggleLoading(false);
-			if(data.register.email === 'already exists') {
-				alert('User with that email already registered');
+			if(data.update.email === 'already exists') {
+				alert('Email is already in use. Please choose a different email.');
 			}
 			else {
+				alert('Successfully updated user information');
 				props.fetchUser();
 			}
-			props.setShowCreate(false);
-
+			props.setShowUpdate(false);
 		};
 	};
 
 	return (
-		<WModal className="signup-modal"  cover="true" visible={props.setShowCreate}>
-			<WMHeader  className="modal-header" onClose={() => props.setShowCreate(false)}>
-				Sign Up
+		<WModal className="signup-modal"  cover="true" visible={props.setShowUpdate}>
+			<WMHeader  className="modal-header" onClose={() => props.setShowUpdate(false)}>
+				Update Account
 			</WMHeader>
 
 			{
@@ -54,12 +57,14 @@ const CreateAccount = (props) => {
 									<WInput 
 										className="" onBlur={updateInput} name="firstName" labelAnimation="up" 
 										barAnimation="solid" labelText="First Name" wType="outlined" inputType="text" 
+                                        defaultValue={input.firstName}
 									/>
 								</WCol>
 								<WCol size="6">
 									<WInput 
 										className="" onBlur={updateInput} name="lastName" labelAnimation="up" 
 										barAnimation="solid" labelText="Last Name" wType="outlined" inputType="text" 
+                                        defaultValue={input.lastName}
 									/>
 								</WCol>
 							</WRow>
@@ -68,16 +73,18 @@ const CreateAccount = (props) => {
 							<WInput 
 								className="modal-input" onBlur={updateInput} name="email" labelAnimation="up" 
 								barAnimation="solid" labelText="Email Address" wType="outlined" inputType="text" 
+                                defaultValue={input.email}
 							/>
 							<div className="modal-spacer">&nbsp;</div>
 							<WInput 
 								className="modal-input" onBlur={updateInput} name="password" labelAnimation="up" 
 								barAnimation="solid" labelText="Password" wType="outlined" inputType="password" 
+                                defaultValue={input.password}
 							/>
 					</WMMain>
 			}
 			<WMFooter>
-				<WButton className="modal-button" onClick={handleCreateAccount} span clickAnimation="ripple-light" hoverAnimation="darken" shape="rounded" color="primary">
+				<WButton className="modal-button" onClick={handleUpdateAccount} span clickAnimation="ripple-light" hoverAnimation="darken" shape="rounded" color="primary">
 					Submit
 				</WButton>
 			</WMFooter>
@@ -86,4 +93,4 @@ const CreateAccount = (props) => {
 	);
 }
 
-export default CreateAccount;
+export default UpdateAccount;

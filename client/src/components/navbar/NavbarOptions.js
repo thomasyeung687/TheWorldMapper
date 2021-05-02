@@ -7,21 +7,31 @@ const LoggedIn = (props) => {
     const client = useApolloClient();
 	const [Logout] = useMutation(LOGOUT);
 
+    let data = {};
     const handleLogout = async (e) => {
         Logout();
-        const { data } = await props.fetchUser();
+        data = await props.fetchUser();
         if (data) {
             let reset = await client.resetStore();
-            if (reset) props.setActiveList({});
+            // if (reset) props.setActiveList({});
         }
     };
-
+    const name = props.user.firstName+" "+props.user.lastName;
+    // console.log(name);
+    const setShowUpdateHelper = props.setShowUpdateProp;
     return (
+        <>
+        <WNavItem hoverAnimation="lighten">
+            <WButton className="navbar-options" onClick={setShowUpdateHelper} wType="texted" hoverAnimation="text-primary">
+                {name}
+            </WButton>
+        </WNavItem >
         <WNavItem hoverAnimation="lighten">
             <WButton className="navbar-options" onClick={handleLogout} wType="texted" hoverAnimation="text-primary">
                 Logout
             </WButton>
         </WNavItem >
+        </>
     );
 };
 
@@ -48,10 +58,9 @@ const NavbarOptions = (props) => {
         <>
             {
                 props.auth === false ? <LoggedOut setShowLogin={props.setShowLogin} setShowCreate={props.setShowCreate} />
-                : <LoggedIn fetchUser={props.fetchUser} setActiveList={props.setActiveList} logout={props.logout} />
+                : <LoggedIn fetchUser={props.fetchUser} setActiveList={props.setActiveList} logout={props.logout} user = {props.user} setShowUpdateProp = {props.setShowUpdateProp} />
             }
         </>
-
     );
 };
 

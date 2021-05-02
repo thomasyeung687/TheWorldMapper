@@ -5,27 +5,27 @@ import { WModal, WMHeader, WMMain, WButton } from 'wt-frontend';
 const Delete = (props) => {
 
     const handleDelete = async () => {
-        props.deleteList(props.activeid);
-        props.setShowDelete(false);
+        props.deleteMap(props.mapId);
+        props.setShowDeleteMap(false);
     }
 
     return (
-        <div className="delete-modal">
-            <div className="modal-header" onClose={() => props.setShowDelete(false)}>
-                Delete List?
-			</div>
+        <WModal className="delete-modal" cover="true" visible={props.setShowDeleteMap}>
+            <WMHeader  className="modal-header" onClose={() => props.setShowDeleteMap(false)}>
+                Delete Map?
+			</WMHeader >
 
-            <div>
-                <WButton className="modal-button cancel-button" onClick={() => props.setShowDelete(false)} wType="texted">
+            <WMMain>
+                <WButton className="modal-button cancel-button" onClick={() => props.setShowDeleteMap(false)} wType="texted">
                     Cancel
 				</WButton>
                 <label className="col-spacer">&nbsp;</label>
                 <WButton className="modal-button" onClick={handleDelete} clickAnimation="ripple-light" hoverAnimation="darken" shape="rounded" color="danger">
                     Delete
 				</WButton>
-            </div>
+            </WMMain>
 
-        </div>
+        </WModal >
     );
 }
 

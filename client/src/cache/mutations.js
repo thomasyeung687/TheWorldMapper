@@ -23,6 +23,19 @@ export const REGISTER = gql`
 		}
 	}
 `;
+
+export const UPDATE = gql`
+	mutation Update($_id: String!, $email: String!, $password: String!, $firstName: String!, $lastName: String!) {
+		update(_id: $_id, email: $email, password: $password, firstName: $firstName, lastName: $lastName) {
+			email
+			password
+			firstName
+			lastName
+		}
+	}
+`;
+
+
 export const LOGOUT = gql`
 	mutation Logout {
 		logout 
@@ -74,20 +87,20 @@ export const REORDER_ITEMS = gql`
 	}
 `;
 
-export const ADD_TODOLIST = gql`
-	mutation AddTodolist($todolist: TodoInput!) {
-		addTodolist(todolist: $todolist) 
+export const ADD_MAP = gql`
+	mutation AddMap($map: MapInput!) {
+		addMap(map: $map) 
 	}
 `;
 
-export const DELETE_TODOLIST = gql`
-	mutation DeleteTodolist($_id: String!) {
-		deleteTodolist(_id: $_id)
+export const DELETE_MAP = gql`
+	mutation DeleteMap($_id: String!) {
+		deleteMap(_id: $_id)
 	}
 `;
 
-export const UPDATE_TODOLIST_FIELD = gql`
-	mutation UpdateTodolistField($_id: String!, $field: String!, $value: String!) {
-		updateTodolistField(_id: $_id, field: $field, value: $value)
+export const UPDATE_MAP_NAME = gql`
+	mutation UpdateMapName($_id: String!, $value: String!) {
+		updateMapName(_id: $_id, value: $value)
 	}
 `;

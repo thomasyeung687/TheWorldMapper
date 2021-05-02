@@ -65,14 +65,55 @@ module.exports = {
 				password: hashed,
 				initials: `${firstName[0]}.${lastName[0]}.`
 			})
-			const saved = await user.save();
+			const region = new User({
+				_id: _id,
+				firstName: firstName,
+				lastName: lastName,
+				email: email, 
+				password: hashed,
+				initials: `${firstName[0]}.${lastName[0]}.`
+			})
+			const saved = await user.save();//creates new object in the db
 			// After registering the user, their tokens are generated here so they
 			// are automatically logged in on account creation.
 			const accessToken = tokens.generateAccessToken(user);
 			const refreshToken = tokens.generateRefreshToken(user);
 			res.cookie('refresh-token', refreshToken, { httpOnly: true , sameSite: 'None', secure: true}); 
-			res.cookie('access-token', accessToken, { httpOnly: true , sameSite: 'None', secure: true}); 
+			res.cookie('access-token', accessToken, { httpOnly: true , sameSite: 'None', secure: true}); //set ther because someone someone has registered
 			return user;
+		},
+		update: async(_, args, { res }) =>{
+			const { _id, email, password, firstName, lastName } = args;
+			// const user = await User.findOne({email: email});
+			console.log("user id from update: ", _id); //terminal
+			const alreadyRegistered = await User.findOne({email: email});
+			if(alreadyRegistered) {
+				console.log('Email already registered.');
+				return(new User({
+					_id: '',
+					firstName: '',
+					lastName: '',
+					email: 'already exists', 
+					password: '',
+					initials: ''}));
+			}
+			const hashed = await bcrypt.hash(password, 10);
+			const updated = await User.updateOne({_id: _id}, { email: email, password: hashed, firstName: firstName, lastName: lastName }); //returns boolean
+			// console.log(updated);
+			const user = new User({
+				_id: _id,
+				firstName: firstName,
+				lastName: lastName,
+				email: email, 
+				password: hashed,
+				initials: `${firstName[0]}.${lastName[0]}.`
+			})
+			// const accessToken = tokens.generateAccessToken(user);
+			// const refreshToken = tokens.generateRefreshToken(user);
+			// res.cookie('refresh-token', refreshToken, { httpOnly: true , sameSite: 'None', secure: true}); 
+			// res.cookie('access-token', accessToken, { httpOnly: true , sameSite: 'None', secure: true}); //is this needed?
+			return user;
+			
 		},
 		/** 
 			@param 	 {object} res - response object containing the current access/refresh tokens  

@@ -27,7 +27,7 @@ const Login = (props) => {
 		}
 		if (data) {
 			props.fetchUser();
-			props.refetchTodos();
+			// props.reloadTodos(); //use this to reload maps.
 			toggleLoading(false)
 			props.setShowLogin(false)
 		};
@@ -35,16 +35,14 @@ const Login = (props) => {
 
 
 	return (
-        // Replace div with WModal
-
-		<div className="login-modal">
-			<div className="modal-header" onClose={() => props.setShowLogin(false)}>
+		<WModal className="login-modal" cover="true" visible={props.setShowLogin}>
+			<WMHeader  className="modal-header" onClose={() => props.setShowLogin(false)}>
 				Login
-			</div>
+			</WMHeader >
 
 			{
 				loading ? <div />
-					: <div className="main-login-modal">
+					: <WMMain className="main-login-modal">
 
 						<WInput className="modal-input" onBlur={updateInput} name='email' labelAnimation="up" barAnimation="solid" labelText="Email Address" wType="outlined" inputType='text' />
 						<div className="modal-spacer">&nbsp;</div>
@@ -57,14 +55,14 @@ const Login = (props) => {
 								: <div className='modal-error'>&nbsp;</div>
 						}
 
-					</div>
+					</WMMain >
 			}
-			<div>
+			<WMFooter>
 				<WButton className="modal-button" onClick={handleLogin} span clickAnimation="ripple-light" hoverAnimation="darken" shape="rounded" color="primary">
 					Login
 				</WButton>
-			</div>
-		</div>
+			</WMFooter>
+		</WModal >
 	);
 }
 
