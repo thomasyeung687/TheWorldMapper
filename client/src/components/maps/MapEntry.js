@@ -25,7 +25,7 @@ const SidebarEntry = (props) => {
         const { name, value } = e.target;
         props.editMapName(props._id, value)
     };
-
+    // console.log("me",props._id)
     // const entryStyle = props.id === props.activeid ? 'list-item list-item-active' : 'list-item ';
     const entryStyle = 'mapEntryContainer ';
     return (

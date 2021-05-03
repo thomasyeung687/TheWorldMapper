@@ -1,5 +1,5 @@
 const ObjectId = require('mongoose').Types.ObjectId;
-const Map = require('../models/map-model');
+const Region = require('../models/region-model');
 
 // The underscore param, "_", is a wildcard that can represent any value;
 // here it is a stand-in for the parent parameter, which can be read about in
@@ -18,19 +18,37 @@ module.exports = {
 				console.log("getAllMaps uid is null!");
 				return([]);
 			};
-			const maps = await Map.find({owner: _id});
+			const maps = await Region.find({owner: _id, parentRegion: null}); //maps are regions with a null parent
 			if(maps) return (maps);
 		},
 		/** 
 		 	@param 	 {object} args - a todolist id
 			@returns {object} a todolist on success and an empty object on failure
 		**/
-		getMapById: async (_, args) => {
+		getRegionById: async (_, args) => {
 			const { _id } = args;
 			const objectId = new ObjectId(_id);
-			const map = await Map.findOne({_id: objectId});
-			if(map) return map;
-			else return ({});
+			const region = await Region.findOne({_id: objectId});
+			if(region){
+				const subregionIds = region.subregions;
+				console.log(subregionIds);
+				region["subregions"] = []
+
+				const getData = async () => {
+					return Promise.all(
+						subregionIds.map(async (_rid) => {
+						const maps = await Region.findOne({_id: _rid});
+						console.log("a Map",maps);
+						region["subregions"].push(maps)
+					}))
+				}
+				getData().then(data => {
+					console.log("region",region)
+					return (region);
+				})
+				// console.log(region)
+				return (region);
+			}else return ({});
 		},
 	},
 	Mutation: {
@@ -42,13 +60,17 @@ module.exports = {
 			console.log("map-resolver");
 			const { map } = args;
 			const objectId = new ObjectId();
-			const { name, owner, subregions } = map;
-			const newMap = new Map({
+			const { name, owner, subregions, capital, leader, landmarks } = map;
+			const newMap = new Region({
 				_id: objectId,
 				// id: id,
 				name: name,
 				owner: owner,
-				subregions: subregions
+				capital: capital,
+				leader: leader,
+				parentRegion: null,
+				subregions: subregions,
+				landmarks: landmarks
 			});
 			const updated = await newMap.save();
 			if(updated) return objectId;
@@ -57,16 +79,68 @@ module.exports = {
 		deleteMap: async (_, args) => {
 			const { _id } = args;
 			const objectId = new ObjectId(_id);
-			const deleted = await Map.deleteOne({_id: objectId});
+			const deleted = await Region.deleteOne({_id: objectId});
 			if(deleted) return true;
 			else return false;
 		},
 		updateMapName: async (_, args) => {
 			const { _id, value } = args;
 			const objectId = new ObjectId(_id);
-			const updated = await Map.updateOne({_id: objectId}, {name: value});
+			const updated = await Region.updateOne({_id: objectId}, {name: value});
 			if(updated) return value;
 			else return "";
-		}
+		},
+
+
+
+		addRegion: async (_, args) => {
+			console.log("addRegion-resolver");
+			const { region } = args;
+			const objectId = new ObjectId();
+			const { name, owner, subregions, capital, leader, landmarks, parentRegion } = region;
+			const newRegion = new Region({
+				_id: objectId,
+				// id: id,
+				name: name,
+				owner: owner,
+				capital: capital,
+				leader: leader,
+				parentRegion: parentRegion,
+				subregions: subregions,
+				landmarks: landmarks
+			});
+			const updated = await newRegion.save();
+			if(updated){
+				const parent =  await Region.findOne({_id: parentRegion})
+				if(parent){
+					console.log("found parent", parent)
+					console.log("Obj id", objectId)
+					let subregions = parent.subregions;//adding subregionid to parent region in db
+					console.log(subregions);
+					subregions.push(objectId)
+					console.log(subregions);
+					const updated = await Region.updateOne({_id: parentRegion}, {subregions: subregions});
+					if(updated){
+						console.log("Sucessfully updated parent in backend")
+						return "Sucessfully updated parent in backend";
+					}else{
+						console.log("Coundn't update parent Deleting region created")
+						const deleted = Region.deleteOne({_id: objectId})
+						return ("Coundn't update parent")
+					}
+				}else{
+					console.log("Coundn't find parent Deleting region created")
+					const deleted = Region.deleteOne({_id: objectId})
+					return ("Coundn't find parent")
+				}
+			}else return ('Could not add Region');
+		},
+		deleteRegion: async (_, args) => {
+			const { _id } = args;
+			const objectId = new ObjectId(_id);
+			const deleted = await Region.deleteOne({_id: objectId});
+			if(deleted) return true;
+			else return false;
+		},
 	}
 }

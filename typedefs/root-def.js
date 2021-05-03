@@ -1,7 +1,6 @@
 const { gql } = require('apollo-server');
 const userDef = require('./user-def').typeDefs;
 const mapDef = require('./map-def').typeDefs;
-const regionDef = require('./region-def').typeDefs;
 
 const rootDef = gql`
 	type Query {

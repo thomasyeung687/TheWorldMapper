@@ -6,10 +6,6 @@ const regionSchema = new Schema(
 			type: ObjectId,
 			required: true
 		},
-		isMap:{
-			type: Boolean,
-			required: true
-		},
 		owner: {
 			type: String,
 			required: true

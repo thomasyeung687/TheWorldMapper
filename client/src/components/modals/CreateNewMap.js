@@ -27,9 +27,13 @@ const CreateNewMap = (props) => {
 		console.log(input.name,props.user);
 		let newMap = {
 			_id: "",
-			name: input.name,
 			owner: props.user._id,
-			subregions: []
+			name: input.name,
+			capital:"map",
+			leader: "map",
+			parentRegion: null,
+			subregions: [],
+			landmarks:[]
 		}
 		//const { data } = await AddMap({ variables: { map: newMap }, refetchQueries: [{ query: GET_DB_TODOS }] });
 		const { data } = await AddMap({ variables: { map: newMap }});

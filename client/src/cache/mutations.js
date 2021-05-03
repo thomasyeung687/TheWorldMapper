@@ -88,7 +88,7 @@ export const REORDER_ITEMS = gql`
 `;
 
 export const ADD_MAP = gql`
-	mutation AddMap($map: MapInput!) {
+	mutation AddMap($map: RegionInput!) {
 		addMap(map: $map) 
 	}
 `;
@@ -104,3 +104,24 @@ export const UPDATE_MAP_NAME = gql`
 		updateMapName(_id: $_id, value: $value)
 	}
 `;
+
+
+
+
+export const ADD_REGION = gql`
+	mutation AddRegion($region: RegionInput!) {
+		addRegion(region: $region) 
+	}
+`;
+
+export const DELETE_REGION = gql`
+	mutation DeleteRegion($_id: String!) {
+		deleteRegion(_id: $_id)
+	}
+`;
+
+// export const UPDATE_REGION_FIELD = gql`
+// 	mutation UpdateRegionField($_id: String!, $value: String!) {
+// 		updateRegionField(_id: $_id, value: $value)
+// 	}
+// `;

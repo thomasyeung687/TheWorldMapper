@@ -1,5 +1,7 @@
 import React from 'react';
 
+
+
 import { WButton, WRow, WCol } from 'wt-frontend';
 
 const TableHeader = (props) => {
@@ -11,7 +13,7 @@ const TableHeader = (props) => {
         <>
         <WRow className="SStable-header0">
             <WCol size="1">
-                <WButton wType="texted" className='SS-header-section SS-header-button' hoverAnimation="lighten" onClick={()=>{console.log("add clicked")} }>
+                <WButton wType="texted" className='SS-header-section SS-header-button' hoverAnimation="lighten" onClick={ props.addItem }>
                     <i className="material-icons">add_box</i>
                 </WButton>
             </WCol>

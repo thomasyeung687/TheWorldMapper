@@ -2,7 +2,7 @@ import React, { useState, useEffect } 	from 'react';
 import Homescreen 		from './components/homescreen/Homescreen';
 import MapsScreen       from './components/maps/MapsScreen';
 import SpreadSheet       from './components/spreadsheet/SpreadSheet';
-import { useQuery } 	from '@apollo/client';
+import { useQuery, useLazyQuery } 	from '@apollo/client';
 import * as queries 	from './cache/queries';
 import { jsTPS } 		from './utils/jsTPS';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
@@ -24,6 +24,8 @@ const App = () => {
     let transactionStack = new jsTPS();
 	
     const { loading, error, data, refetch } = useQuery(queries.GET_DB_USER);
+	const [ getRegionById, { loading:rbiloading, data:rbiData } ] = useLazyQuery(queries.GET_DB_REGION_BY_ID);
+	// const [ getRegionById ] = useLazyQuery(queries.GET_DB_REGION_BY_ID);
 
     if(error) { console.log(error); }
 	if(loading) { console.log(loading); }
@@ -71,28 +73,52 @@ const App = () => {
 	//for navbar
 
 	const [maps, setMaps] 						= useState([]);
-	const [activeMap, setActiveMap] 			= useState({});
-	const [activeRegion, setActiveRegion] 		= useState({});
+	const [activeRegion, setActiveRegion] 		= useState(null);
 	
 
-	const handleSetActiveMap = (id) => {
-		const map = maps.find(map => map.id === id || map._id === id);
+	const handleSetActiveMap = async (id) => {
+		const map = maps.find(map => map._id === id);
 		// tps.clearAllTransactions();
 		//get all subregions using subregions array in map
-		console.log(map);
-		setActiveMap(map);
+		console.log("handleSetActiveMap",map._id);
+		await getRegionById({ variables: { _id: map._id } })
+		// console.log(rbiData);
+		// console.log("handleSetActiveMap",id)
+		// console.log(map);
+		let regionObj = null;
+		if(rbiData) { 
+			let { getRegionById } = rbiData;
+			if(getRegionById !== null) { regionObj = getRegionById; }
+		}
+		
+		console.log(rbiData);
 
+		setActiveRegion(regionObj);
+	};
+
+	const handleSetActiveRegion = (id) => {
+		const region = activeRegion.subregions.find(region => region._id === id);
+		// tps.clearAllTransactions();
+		//get all subregions using subregions array in map
+		
+		// console.log("handleSetActiveRegion",id)
+		// console.log(region);
+
+		setActiveRegion(region);
 	};
 
 	console.log(maps);
+	console.log("active Region", activeRegion);
 
 	return(
 		<>
 		<WLHeader>
 				<WNavbar color="danger" style={{backgroundColor: "black"}}>
 					<ul>
-						<WNavItem>
-							<Logo className='logo' />
+						<WNavItem >
+							<Logo className='logo' 
+							setActiveRegion= {setActiveRegion}//to go back to maps by setting active region to []
+							/>
 						</WNavItem>
 					</ul>
 					<ul>
@@ -102,14 +128,14 @@ const App = () => {
 							// setActiveList={setActiveList}
 							user={user}
 							setShowUpdateProp={setShowUpdate}
-
 							// refetchTodos={refetch}
 						/>
 					</ul>
 				</WNavbar>
 			</WLHeader>
 		<BrowserRouter>
-			{auth && <Redirect to="/spreadsheet" />}
+			{auth && activeRegion !== null ? <Redirect to="/spreadsheet" /> : <Redirect to="/maps" />}
+			{auth && activeRegion === null ? <Redirect to="/maps" /> : <Redirect to="/spreadsheet" />}
 			{auth === false && <Redirect to={ {pathname: "/home"} } />}
 			<Switch>
 				<Redirect exact from="/" to={ {pathname: "/home"} } />
@@ -128,7 +154,7 @@ const App = () => {
 						<MapsScreen tps={transactionStack} 
 						fetchUser={refetch} user={user} 
 						maps={maps} setMaps={setMaps} 
-						activeMap={activeMap} setActiveMap={setActiveMap} handleSetActiveMap={handleSetActiveMap}/>
+						handleSetActiveMap={handleSetActiveMap}/>
 					} 
 				/>
 				<Route
@@ -137,8 +163,8 @@ const App = () => {
 					render={() => 
 						<SpreadSheet tps={transactionStack} 
 						fetchUser={refetch} user={user} 
-						maps={maps} setMaps={setMaps} 
-						activeMap={activeMap} setActiveMap={setActiveMap} handleSetActiveMap={handleSetActiveMap}/>
+						activeRegion={activeRegion}
+						handleSetActiveRegion={handleSetActiveRegion}/>
 					} 
 				/>
 			</Switch>

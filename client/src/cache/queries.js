@@ -22,28 +22,26 @@ export const GET_DB_MAPS = gql`
 	}
 `;
 
-export const GET_DB_MAP_BY_ID = gql`
-	query GetDBMapById {
-		getMapById {
-			_id
-			name
-			owner
-			subregions
-		}
-	}
-`;
-
 export const GET_DB_REGION_BY_ID = gql`
-	query GetDBRegionById {
-		getRegionById {
+	query GetDBRegionpById($_id: String!) {
+		getRegionById(_id: $_id) {
 			_id
 			owner
 			name
 			capital
 			leader
-			landmarks
 			parentRegion
-			subregions
+			subregions{
+				_id
+				owner
+				name
+				capital
+				leader
+				parentRegion
+				subregions
+				landmarks
+			}
+			landmarks
 		}
 	}
 `;
