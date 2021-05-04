@@ -126,6 +126,17 @@ const App = () => {
 		setActiveRegion(region);
 	};
 
+	const mostRecentMapToTop = (id) => {
+		console.log("mostRecentMapToTop", id);
+		
+		let recentMap = maps.filter((map)=>{return map._id === id});
+		let restMap = maps.filter((map)=>{return map._id !== id});
+
+		let newMap = [...recentMap, ...restMap];
+		console.log(newMap);
+		setMaps(newMap);
+	}
+
 	console.log(maps);
 	console.log("active Region", activeRegion);
 
@@ -179,7 +190,8 @@ const App = () => {
 						<MapsScreen tps={transactionStack} 
 						fetchUser={refetch} user={user} 
 						maps={maps} setMaps={setMaps} 
-						setActiveRegion={setActiveRegion}/>
+						setActiveRegion={setActiveRegion}
+						mostRecentMapToTop={mostRecentMapToTop}/>
 					} 
 				/>
 				<Route

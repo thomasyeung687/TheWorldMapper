@@ -57,6 +57,8 @@ const SidebarEntry = (props) => {
         }
 		console.log(regionObj);
         console.log(regionObj["subregions"]);
+
+        props.mostRecentMapToTop(props._id);
         //here I want to get the subregions from the db. How do I call the query but with each subregions id?
         // let newSubRegions = [];
         // regionObj["subregions"].map((_id)=>{

@@ -65,6 +65,7 @@ const MapsScreen = (props) => {
                         deleteMap ={deleteMap}
                         editMapName = {editMapName}
                         setActiveRegion={props.setActiveRegion}
+                        mostRecentMapToTop={props.mostRecentMapToTop}
                         />)    )}
                     </div>
                     <div className="yourMapsRightBox">
