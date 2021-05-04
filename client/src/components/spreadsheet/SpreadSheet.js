@@ -23,8 +23,26 @@ const MainContents = (props) => {
 		}
 		//const { data } = await AddMap({ variables: { map: newMap }, refetchQueries: [{ query: GET_DB_TODOS }] });
 		const { data } = await AddRegion({ variables: { region: newRegion }});
-        console.log(data);
+        let { addRegion } = data;
+        console.log(addRegion);
+        // let region = props.activeRegion
+        // region
+
+        props.setActiveRegion(addRegion)
     }
+
+    // const DeleteRegion = async (_id) => {
+    //     console.log("DeleteRegion")
+	// 	//const { data } = await AddMap({ variables: { map: newMap }, refetchQueries: [{ query: GET_DB_TODOS }] });
+	// 	const { data } = await AddRegion({ variables: { region: newRegion }});
+    //     let { addRegion } = data;
+    //     console.log(addRegion);
+    //     // let region = props.activeRegion
+    //     // region
+
+    //     props.setActiveRegion(addRegion)
+    // }
+
     return (
         <div className='mainContainer'>
             <div className='SSContainer' >

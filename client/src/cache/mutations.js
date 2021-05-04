@@ -110,7 +110,16 @@ export const UPDATE_MAP_NAME = gql`
 
 export const ADD_REGION = gql`
 	mutation AddRegion($region: RegionInput!) {
-		addRegion(region: $region) 
+		addRegion(region: $region) {
+			_id
+			owner
+			name
+			capital
+			leader
+			parentRegion
+			subregions
+			landmarks
+		}
 	}
 `;
 

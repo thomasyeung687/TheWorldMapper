@@ -84,8 +84,8 @@ module.exports = {
 				landmarks: landmarks
 			});
 			const updated = await newMap.save();
-			if(updated) return objectId;
-			else return ('Could not add Map');
+			if(updated) return newMap;
+			else return ({});
 		},
 		deleteMap: async (_, args) => {
 			const { _id } = args;
@@ -131,20 +131,21 @@ module.exports = {
 					subregions.push(objectId)
 					console.log(subregions);
 					const updated = await Region.updateOne({_id: parentRegion}, {subregions: subregions});
+					const parentreFetched =  await Region.findOne({_id: parentRegion})
 					if(updated){
 						console.log("Sucessfully updated parent in backend")
-						return "Sucessfully updated parent in backend";
+						return parentreFetched;
 					}else{
 						console.log("Coundn't update parent Deleting region created")
 						const deleted = Region.deleteOne({_id: objectId})
-						return ("Coundn't update parent")
+						return (parent)
 					}
 				}else{
 					console.log("Coundn't find parent Deleting region created")
 					const deleted = Region.deleteOne({_id: objectId})
-					return ("Coundn't find parent")
+					return (null)
 				}
-			}else return ('Could not add Region');
+			}else return (null);
 		},
 		deleteRegion: async (_, args) => {
 			const { _id } = args;
