@@ -81,15 +81,17 @@ const SidebarEntry = (props) => {
         <>
         <WNavItem 
             className={entryStyle} onDoubleClick={handleEditing} 
-            onClick={() => { console.log("entry clicked"); setActiveHelperFunction() }} hoverAnimation="lighten"
+            hoverAnimation="lighten"
         >
             {
                 editing ? <WInput className="list-item-edit" inputClass="list-item-edit-input" wType="lined" barAnimation="solid" name='name' onBlur={handleSubmit} autoFocus={true} defaultValue={props.name} />
                     :   
                     <>
                     <div className="MapEntryContentWrapper">
-                        <div className='list-text'>
-                            {props.name}
+                        <div className="MapEntryClickable " onClick={() => { console.log("entry clicked"); setActiveHelperFunction() }}>
+                            <div className='list-text'>
+                                {props.name}
+                            </div>
                         </div>
                         <WButton className='mapEntryTrashContainer' wType="texted" onClick={()=>{setShowDeleteMap(); }}>
                             <img className="mapEntryTrashImg" src={trash} alt="trash" />

@@ -85,8 +85,8 @@ module.exports = {
 				landmarks: landmarks
 			});
 			const updated = await newMap.save();
-			if(updated) return newMap;
-			else return ({});
+			if(updated) return "newMap";
+			else return ("");
 		},
 		deleteMap: async (_, args) => {
 			const { _id } = args;

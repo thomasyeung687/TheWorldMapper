@@ -27,15 +27,16 @@ const MapsScreen = (props) => {
 	if(loading) { console.log(loading, 'loading'); }
 	if(error) { console.log(error, 'error'); }
 	if(data) {
-        if(props.maps.length === 0){
+        // if(props.maps.length === 0){
             props.setMaps(data.getAllMaps) 
-        } 
+        // } 
     }
 	if(!data){console.log("not dataMap")}
 
     const deleteMap = async (_id) => {
 		DeleteMap({ variables: { _id: _id }, refetchQueries: [{ query: queries.GET_DB_MAPS }] });
 		refetch();//refetches maps using refetch from line 28
+        props.setMaps(data.getAllMaps);
 	};
 
 	const refetchMaps = async (refetch) => {//used when we need to refetch while updating a map
