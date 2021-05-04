@@ -25,7 +25,6 @@ const App = () => {
     let transactionStack = new jsTPS();
 	
     const { loading, error, data, refetch } = useQuery(queries.GET_DB_USER);
-	
 	// const [ getRegionById ] = useLazyQuery(queries.GET_DB_REGION_BY_ID);
 
     if(error) { console.log(error); }
@@ -138,6 +137,7 @@ const App = () => {
 						<WNavItem >
 							<Logo className='logo' 
 							setActiveRegion= {setActiveRegion}//to go back to maps by setting active region to []
+							setSSRegion={setSSRegion}
 							/>
 						</WNavItem>
 					</ul>
@@ -154,9 +154,10 @@ const App = () => {
 				</WNavbar>
 			</WLHeader>
 		<BrowserRouter>
+			{auth && activeRegion !== null && activeSSRegion !== null ? <Redirect to="/regionViewer" /> : <Redirect to="/spreadsheet" />}
 			{auth && activeRegion !== null ? <Redirect to="/spreadsheet" /> : <Redirect to="/maps" />}
 			{auth && activeRegion === null ? <Redirect to="/maps" /> : <Redirect to="/spreadsheet" />}
-			{auth && activeRegion !== null && activeSSRegion !== null ? <Redirect to="/regionViewer" /> : <Redirect to="/spreadsheet" />}
+
 			{/* {auth === false ? activeRegion !== null ? activeSSRegion !== null ? <Redirect to="/regionViewer" /> : <Redirect to="/spreadsheet" /> : <Redirect to="/maps" /> : <Redirect to={ {pathname: "/home"} } /> } */}
 			
 			{/* {auth && activeRegion === null ? <Redirect to="/regionViewer" /> : <Redirect to="/spreadsheet" />} */}

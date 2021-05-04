@@ -123,7 +123,7 @@
 }
 
 .rv_backForwardButtons {
-  background-color: white;
+  // background-color: white;
   width: 35px;
   height: 35px;
   margin-left: 10px;
@@ -152,6 +152,12 @@
   margin: 10px;
 }
 
+.rv_ParentName_Text {
+  font-size: 20px;
+  color: blue;
+  cursor: pointer;
+}
+
 .rv_ParentTextBox {
   display: flex;
   flex-direction: row;
@@ -159,7 +165,7 @@
 }
 
 .rv_editButton {
-  background-color: white;
+  // background-color: white;
   width: 35px;
   height: 35px;
   margin-left: 10px;
@@ -206,6 +212,9 @@
 }
 
 .rv_addNewLandmarksBar_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 35px;
   width: 35px;
   background-color: gray;

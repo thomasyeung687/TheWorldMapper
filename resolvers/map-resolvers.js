@@ -14,6 +14,7 @@ module.exports = {
 		getAllMaps: async (_, __, { req }) => {
 			const _id = new ObjectId(req.userId);
 			console.log("getAllMaps:",req.userId)
+			console.log("in getallmaps resolver!");
 			if(!_id) { 
 				console.log("getAllMaps uid is null!");
 				return([]);

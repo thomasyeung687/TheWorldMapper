@@ -1,6 +1,7 @@
 import React, { useState } 	from 'react';
 import { LOGIN } 			from '../../cache/mutations';
 import { useMutation }    	from '@apollo/client';
+import * as queries 	from '../../cache/queries';
 
 import { WModal, WMHeader, WMMain, WMFooter, WButton, WInput } from 'wt-frontend';
 
@@ -18,8 +19,7 @@ const Login = (props) => {
 	}
 
 	const handleLogin = async (e) => {
-
-		const { loading, error, data } = await Login({ variables: { ...input } });
+		const { loading, error, data } = await Login({ variables: { ...input }, refetchQueries: [{query: queries.GET_DB_MAPS}] });
 		if (loading) { toggleLoading(true) };
 		if (data.login._id === null) {
 			displayErrorMsg(true);
