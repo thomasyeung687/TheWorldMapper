@@ -21,11 +21,16 @@ const MapsScreen = (props) => {
 		console.log("create map")
 	}
     
+    console.log("MapsScreen",props.maps)
 
     const { loading, error, data, refetch } = useQuery(queries.GET_DB_MAPS);
 	if(loading) { console.log(loading, 'loading'); }
 	if(error) { console.log(error, 'error'); }
-	if(data) { props.setMaps(data.getAllMaps) }
+	if(data) {
+        if(props.maps.length === 0){
+            props.setMaps(data.getAllMaps) 
+        } 
+    }
 	if(!data){console.log("not dataMap")}
 
     const deleteMap = async (_id) => {
@@ -50,6 +55,18 @@ const MapsScreen = (props) => {
         refetch();//refetches maps using refetch from line 28
     }
 
+    let maps = props.maps;
+    const mostRecentMapToTop = (id) => {
+		console.log("mostRecentMapToTop", id);
+		
+		let recentMap = maps.filter((map)=>{return map._id === id});
+		let restMap = maps.filter((map)=>{return map._id !== id});
+
+		let newMap = [...recentMap, ...restMap];
+		console.log(newMap);
+        maps = newMap;
+		props.setMaps(newMap);
+	}
 
     console.log("mapscreen")
     return (
@@ -60,12 +77,12 @@ const MapsScreen = (props) => {
                 </div>
                 <div className="yourMapsMainContent">
                     <div className="yourMapsLeftBox">
-                        {props.maps.map( map => (<MapEntry name={map.name} _id={map._id}
+                        {maps.map( map => (<MapEntry name={map.name} _id={map._id}
                         updateListField={props.updateListField}  
                         deleteMap ={deleteMap}
                         editMapName = {editMapName}
                         setActiveRegion={props.setActiveRegion}
-                        mostRecentMapToTop={props.mostRecentMapToTop}
+                        handleSetActiveMap={props.handleSetActiveMap}
                         />)    )}
                     </div>
                     <div className="yourMapsRightBox">

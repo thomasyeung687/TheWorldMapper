@@ -114,20 +114,8 @@ const App = () => {
 	// 		}
 	// 	}
 	// }
-
-	const handleSetActiveRegion = (id) => {
-		const region = activeRegion.subregions.find(region => region._id === id);
-		// tps.clearAllTransactions();
-		//get all subregions using subregions array in map
-		
-		// console.log("handleSetActiveRegion",id)
-		// console.log(region);
-
-		setActiveRegion(region);
-	};
-
-	const mostRecentMapToTop = (id) => {
-		console.log("mostRecentMapToTop", id);
+	const handleSetActiveMap = (id) =>{
+		console.log("handleSetActiveMap", id);
 		
 		let recentMap = maps.filter((map)=>{return map._id === id});
 		let restMap = maps.filter((map)=>{return map._id !== id});
@@ -135,6 +123,7 @@ const App = () => {
 		let newMap = [...recentMap, ...restMap];
 		console.log(newMap);
 		setMaps(newMap);
+		setActiveRegion(recentMap[0]);
 	}
 
 	console.log(maps);
@@ -191,7 +180,7 @@ const App = () => {
 						fetchUser={refetch} user={user} 
 						maps={maps} setMaps={setMaps} 
 						setActiveRegion={setActiveRegion}
-						mostRecentMapToTop={mostRecentMapToTop}/>
+						handleSetActiveMap={handleSetActiveMap}/>
 					} 
 				/>
 				<Route

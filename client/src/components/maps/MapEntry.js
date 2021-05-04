@@ -43,22 +43,22 @@ const SidebarEntry = (props) => {
 		// console.log(rbiData);
 		// console.log("handleSetActiveMap",id)
 		// console.log(map);
-		let regionObj = null;
-		// if(rbiData) { 
-		// 	let { getRegionById } = rbiData;
-		// 	if(getRegionById !== null) { regionObj = getRegionById; }
-		// }
-        if(error) { console.log(error); }
-        if(loading) { console.log(loading); }
-        if(data) { 
-		    console.log(data);
-            let { getRegionById } = data;
-            if(getRegionById !== null) { regionObj = getRegionById; }
-        }
-		console.log(regionObj);
-        console.log(regionObj["subregions"]);
+		// let regionObj = null;
+		// // if(rbiData) { 
+		// // 	let { getRegionById } = rbiData;
+		// // 	if(getRegionById !== null) { regionObj = getRegionById; }
+		// // }
+        // if(error) { console.log(error); }
+        // if(loading) { console.log(loading); }
+        // if(data) { 
+		//     console.log(data);
+        //     let { getRegionById } = data;
+        //     if(getRegionById !== null) { regionObj = getRegionById; }
+        // }
+		// console.log(regionObj);
+        // console.log(regionObj["subregions"]);
 
-        props.mostRecentMapToTop(props._id);
+        props.handleSetActiveMap(props._id);
         //here I want to get the subregions from the db. How do I call the query but with each subregions id?
         // let newSubRegions = [];
         // regionObj["subregions"].map((_id)=>{
@@ -74,7 +74,7 @@ const SidebarEntry = (props) => {
         // console.log(newSubRegions)
         // regionObj["subregions"] = newSubRegions;
 
-		props.setActiveRegion(regionObj);
+		// props.setActiveRegion(regionObj);
     }
 
     return (
