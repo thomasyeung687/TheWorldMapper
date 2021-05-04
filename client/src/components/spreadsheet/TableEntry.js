@@ -79,7 +79,8 @@ const TableEntry = (props) => {
                             wType="outlined" barAnimation="solid" inputClass="table-input-class"
                         />
                         : <div className="SStableText"
-                            onClick={() => toggleNameEdit(!editingName)}
+                            // onClick={() => toggleNameEdit(!editingName)}
+                            onClick={() => {props.setActiveRegion(region)}}
                         >{name}
                         </div>
                 }
@@ -122,7 +123,7 @@ const TableEntry = (props) => {
             <WCol size="4">
                 <div className="SStableText"
                     onClick={() => 
-                        <Redirect to="/regionViewer" />
+                        props.setSSRegion(region)
                     }
                 >{landmarks}
                 </div>

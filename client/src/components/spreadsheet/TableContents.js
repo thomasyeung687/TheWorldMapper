@@ -23,6 +23,7 @@ const TableContents = (props) => {
                         _id={_id}
                         activeRegion= {props.activeRegion}
                         setActiveRegion={props.setActiveRegion}
+                        activeSSRegion={props.activeSSRegion} setSSRegion={props.setSSRegion}
                         // deleteItem={props.deleteItem} reorderItem={props.reorderItem}
                         // editItem={props.editItem}
                     />

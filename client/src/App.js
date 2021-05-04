@@ -6,7 +6,7 @@ import RegionViewer 	from './components/regionViewer/RegionViewer';
 import { useQuery, useLazyQuery } 	from '@apollo/client';
 import * as queries 	from './cache/queries';
 import { jsTPS } 		from './utils/jsTPS';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect, useHistory } from 'react-router-dom';
 
 //imports for navbar
 import { WNavbar, WSidebar, WNavItem } 	from 'wt-frontend';
@@ -75,6 +75,7 @@ const App = () => {
 
 	const [maps, setMaps] 						= useState([]);
 	const [activeRegion, setActiveRegion] 		= useState(null);
+	const [activeSSRegion, setSSRegion] 		= useState(null);
 	
 
 	// const handleSetActiveMap = async (id) => {
@@ -98,6 +99,22 @@ const App = () => {
 
 	// 	setActiveRegion(regionObj);
 	// };
+
+	// let history = useHistory();
+
+	// if(auth === false){
+	// 	history.push("/home")
+	// }else{
+	// 	if(activeRegion === null){
+	// 		history.push("/maps")
+	// 	}else{
+	// 		if(activeSSRegion === null){
+	// 			history.push("/spreadsheet")
+	// 		}else{
+	// 			history.push("/regionViewer")
+	// 		}
+	// 	}
+	// }
 
 	const handleSetActiveRegion = (id) => {
 		const region = activeRegion.subregions.find(region => region._id === id);
@@ -139,6 +156,9 @@ const App = () => {
 		<BrowserRouter>
 			{auth && activeRegion !== null ? <Redirect to="/spreadsheet" /> : <Redirect to="/maps" />}
 			{auth && activeRegion === null ? <Redirect to="/maps" /> : <Redirect to="/spreadsheet" />}
+			{auth && activeRegion !== null && activeSSRegion !== null ? <Redirect to="/regionViewer" /> : <Redirect to="/spreadsheet" />}
+			{/* {auth === false ? activeRegion !== null ? activeSSRegion !== null ? <Redirect to="/regionViewer" /> : <Redirect to="/spreadsheet" /> : <Redirect to="/maps" /> : <Redirect to={ {pathname: "/home"} } /> } */}
+			
 			{/* {auth && activeRegion === null ? <Redirect to="/regionViewer" /> : <Redirect to="/spreadsheet" />} */}
 			{auth === false && <Redirect to={ {pathname: "/home"} } />}
 			<Switch>
@@ -168,7 +188,9 @@ const App = () => {
 						<SpreadSheet tps={transactionStack} 
 						fetchUser={refetch} user={user} 
 						activeRegion={activeRegion}
-						setActiveRegion={setActiveRegion}/>
+						setActiveRegion={setActiveRegion}
+						activeSSRegion={activeSSRegion} setSSRegion={setSSRegion}
+						/>
 					} 
 				/>
 
@@ -179,7 +201,8 @@ const App = () => {
 						<RegionViewer tps={transactionStack} 
 						fetchUser={refetch} user={user} 
 						activeRegion={activeRegion}
-						setActiveRegion={setActiveRegion}/>
+						setActiveRegion={setActiveRegion}
+						activeSSRegion={activeSSRegion} setSSRegion={setSSRegion}/>
 					} 
 				/>
 			</Switch>
