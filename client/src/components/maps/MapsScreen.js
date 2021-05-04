@@ -13,7 +13,7 @@ const MapsScreen = (props) => {
     const [showCreateMap, toggleShowCreateMap] 	= useState(false);
     
 
-    const [DeleteMap] 			= useMutation(mutations.DELETE_MAP);
+    const [DeleteMap] 			    = useMutation(mutations.DELETE_MAP);
     const [UpdateMapName] 			= useMutation(mutations.UPDATE_MAP_NAME);
 
     const setShowCreateMap = () => {
@@ -64,7 +64,7 @@ const MapsScreen = (props) => {
                         updateListField={props.updateListField}  
                         deleteMap ={deleteMap}
                         editMapName = {editMapName}
-                        handleSetActiveMap={props.handleSetActiveMap}
+                        setActiveRegion={props.setActiveRegion}
                         />)    )}
                     </div>
                     <div className="yourMapsRightBox">

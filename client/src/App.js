@@ -2,6 +2,7 @@ import React, { useState, useEffect } 	from 'react';
 import Homescreen 		from './components/homescreen/Homescreen';
 import MapsScreen       from './components/maps/MapsScreen';
 import SpreadSheet       from './components/spreadsheet/SpreadSheet';
+import RegionViewer 	from './components/regionViewer/RegionViewer';
 import { useQuery, useLazyQuery } 	from '@apollo/client';
 import * as queries 	from './cache/queries';
 import { jsTPS } 		from './utils/jsTPS';
@@ -24,7 +25,7 @@ const App = () => {
     let transactionStack = new jsTPS();
 	
     const { loading, error, data, refetch } = useQuery(queries.GET_DB_USER);
-	const [ getRegionById, { loading:rbiloading, data:rbiData } ] = useLazyQuery(queries.GET_DB_REGION_BY_ID);
+	
 	// const [ getRegionById ] = useLazyQuery(queries.GET_DB_REGION_BY_ID);
 
     if(error) { console.log(error); }
@@ -76,25 +77,27 @@ const App = () => {
 	const [activeRegion, setActiveRegion] 		= useState(null);
 	
 
-	const handleSetActiveMap = async (id) => {
-		const map = maps.find(map => map._id === id);
-		// tps.clearAllTransactions();
-		//get all subregions using subregions array in map
-		console.log("handleSetActiveMap",map._id);
-		await getRegionById({ variables: { _id: map._id } })
-		// console.log(rbiData);
-		// console.log("handleSetActiveMap",id)
-		// console.log(map);
-		let regionObj = null;
-		if(rbiData) { 
-			let { getRegionById } = rbiData;
-			if(getRegionById !== null) { regionObj = getRegionById; }
-		}
+	// const handleSetActiveMap = async (id) => {
+	// 	const map = maps.find(map => map._id === id);
+	// 	// tps.clearAllTransactions();
+	// 	//get all subregions using subregions array in map
+	// 	console.log("handleSetActiveMap",map._id);
+	// 	let temp = await getRegionById({ variables: { _id: map._id } })
+	// 	// console.log(rbiData);
+	// 	// console.log("handleSetActiveMap",id)
+	// 	// console.log(map);
+	// 	let regionObj = null;
+	// 	// if(rbiData) { 
+	// 	// 	let { getRegionById } = rbiData;
+	// 	// 	if(getRegionById !== null) { regionObj = getRegionById; }
+	// 	// }
+	// 	regionObj = rbiData;
 		
-		console.log(rbiData);
+	// 	console.log(temp)
+	// 	console.log(rbiData);
 
-		setActiveRegion(regionObj);
-	};
+	// 	setActiveRegion(regionObj);
+	// };
 
 	const handleSetActiveRegion = (id) => {
 		const region = activeRegion.subregions.find(region => region._id === id);
@@ -136,6 +139,7 @@ const App = () => {
 		<BrowserRouter>
 			{auth && activeRegion !== null ? <Redirect to="/spreadsheet" /> : <Redirect to="/maps" />}
 			{auth && activeRegion === null ? <Redirect to="/maps" /> : <Redirect to="/spreadsheet" />}
+			{/* {auth && activeRegion === null ? <Redirect to="/regionViewer" /> : <Redirect to="/spreadsheet" />} */}
 			{auth === false && <Redirect to={ {pathname: "/home"} } />}
 			<Switch>
 				<Redirect exact from="/" to={ {pathname: "/home"} } />
@@ -154,7 +158,7 @@ const App = () => {
 						<MapsScreen tps={transactionStack} 
 						fetchUser={refetch} user={user} 
 						maps={maps} setMaps={setMaps} 
-						handleSetActiveMap={handleSetActiveMap}/>
+						setActiveRegion={setActiveRegion}/>
 					} 
 				/>
 				<Route
@@ -164,7 +168,18 @@ const App = () => {
 						<SpreadSheet tps={transactionStack} 
 						fetchUser={refetch} user={user} 
 						activeRegion={activeRegion}
-						handleSetActiveRegion={handleSetActiveRegion}/>
+						setActiveRegion={setActiveRegion}/>
+					} 
+				/>
+
+				<Route
+					path="/regionViewer" 
+					name="regionViewer" 
+					render={() => 
+						<RegionViewer tps={transactionStack} 
+						fetchUser={refetch} user={user} 
+						activeRegion={activeRegion}
+						setActiveRegion={setActiveRegion}/>
 					} 
 				/>
 			</Switch>

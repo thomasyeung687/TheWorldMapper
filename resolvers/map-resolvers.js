@@ -30,24 +30,35 @@ module.exports = {
 			const objectId = new ObjectId(_id);
 			const region = await Region.findOne({_id: objectId});
 			if(region){
-				const subregionIds = region.subregions;
-				console.log(subregionIds);
-				region["subregions"] = []
+				// const subregionIds = region.subregions;
+				// console.log(subregionIds);
+				// const subregionsObjArr = []
 
-				const getData = async () => {
-					return Promise.all(
-						subregionIds.map(async (_rid) => {
-						const maps = await Region.findOne({_id: _rid});
-						console.log("a Map",maps);
-						region["subregions"].push(maps)
-					}))
-				}
-				getData().then(data => {
-					console.log("region",region)
-					return (region);
-				})
-				// console.log(region)
-				return (region);
+				// const getData = async () => {
+				// 	return Promise.all(
+				// 		subregionIds.map(async (_rid) => {
+				// 		const maps = await Region.findOne({_id: _rid});
+				// 		console.log("a Map",maps);
+				// 		const newMap = new Region({
+				// 			_id: maps._id,
+				// 			// id: id,
+				// 			name: maps.name,
+				// 			owner: maps.owner,
+				// 			capital: maps.capital,
+				// 			leader: maps.leader,
+				// 			parentRegion: maps.parentRegion,
+				// 			subregions: maps.subregions,
+				// 			landmarks: maps.landmarks
+				// 		});
+				// 		subregionsObjArr.push(newMap)
+				// 	}))
+				// }
+				// await getData();
+				// console.log("subregionsObjArr",subregionsObjArr)
+				// region["subregions"] = subregionsObjArr;
+				// region["parentRegion"] = "";
+				console.log("region", region)
+				return region;
 			}else return ({});
 		},
 	},

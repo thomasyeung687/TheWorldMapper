@@ -64,3 +64,127 @@
 .SStable-header {
   background-color: #c72e34;
 }
+
+//start of regionViewer Styling
+.rv_Maincontainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  // background-color: blue;
+  padding: 50px;
+}
+.rv_LeftBox {
+  width: Clamp(350px, 33%, 500px);
+  height: 100%;
+  // background-color: yellow;
+  display: flex;
+  flex-direction: column;
+}
+
+.rv_backForwardButtonsBox {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 35px;
+  // background-color: black;
+}
+
+.rv_backForwardButtons {
+  background-color: white;
+  width: 35px;
+  height: 35px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.rv_Img {
+  height: 50%;
+  width: auto;
+  margin: 50px;
+}
+
+.rv_TextContainer {
+  padding-top: 20px;
+  width: 100%;
+  height: 500px;
+  // background-color: black;
+
+  font-size: 20px;
+  color: white;
+}
+
+.rv_Text {
+  font-size: 20px;
+  color: white;
+  margin: 10px;
+}
+
+.rv_ParentTextBox {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.rv_editButton {
+  background-color: white;
+  width: 35px;
+  height: 35px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+//Styling of Right box starts here
+
+.rv_RightBox {
+  width: Clamp(350px, 40%, 600px);
+  height: 100%;
+  // background-color: pink;
+}
+
+.rv_landmarksContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  // background-color: yellowgreen;
+}
+
+.rv_landmarks_textbox {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  color: white;
+  font-size: 25px;
+}
+
+.landmarksBox {
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  background-color: black;
+  width: 100%;
+  height: calc(100% - 35px);
+  height: -moz-calc(100% - 35px);
+}
+
+.rv_addNewLandmarksBar {
+  background-color: #404140;
+  display: flex;
+  width: 100%;
+  height: 35px;
+}
+
+.rv_addNewLandmarksBar_btn {
+  height: 35px;
+  width: 35px;
+  background-color: gray;
+  cursor: pointer;
+}
+
+.rv_addNewLandmarksBar_input {
+  background-color: #c2c3c3;
+  display: flex;
+  width: 50%;
+  height: 35px;
+  font-size: 20px;
+}

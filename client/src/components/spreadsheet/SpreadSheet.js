@@ -33,6 +33,10 @@ const MainContents = (props) => {
                     setShowDelete={props.setShowDelete} setActiveList={props.setActiveList}
                 />
                 <TableContents
+                    activeRegion={props.activeRegion}
+                    setActiveRegion={props.setActiveRegion}
+                    // deleteItem={props.deleteItem} reorderItem={props.reorderItem}
+                    // editItem={props.editItem}
                 />
             </div>
         </div>

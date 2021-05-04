@@ -24,7 +24,7 @@ const typeDefs = gql `
 	}
 	extend type Query {
 		getAllMaps: [Region]
-		getRegionById(_id: String!): RegionWRegionObj
+		getRegionById(_id: String!): Region
 	}
 	extend type Mutation {
 		addMap(map: RegionInput!): String

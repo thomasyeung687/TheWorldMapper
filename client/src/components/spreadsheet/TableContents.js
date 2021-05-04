@@ -8,9 +8,28 @@ const TableContents = (props) => {
     const setShowDeleteRegion = () =>{
         toggleShowDeleteRegion(!showDeleteRegion);
     }
+    console.log(props.activeRegion);
     return (
         <>
         <div className=' SSMainContent'>
+            
+            {
+                props.activeRegion ?
+                props.activeRegion.subregions.map((_id, index) => (
+                    <TableEntry
+                        index={index}
+                        num = {index}
+                        // indOfLastEntry = {indOfLastEntry}
+                        _id={_id}
+                        activeRegion= {props.activeRegion}
+                        setActiveRegion={props.setActiveRegion}
+                        // deleteItem={props.deleteItem} reorderItem={props.reorderItem}
+                        // editItem={props.editItem}
+                    />
+                ))
+                :
+                <div></div>
+            }
         </div>
         {
 			showDeleteRegion && (<DeleteModal  

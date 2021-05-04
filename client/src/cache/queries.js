@@ -22,6 +22,12 @@ export const GET_DB_MAPS = gql`
 	}
 `;
 
+// export const GET_DB_REGION_BY_ID = gql`
+// 	query GetDBRegionpById($_id: String!) {
+// 		getRegionById(_id: $_id) 
+// 	}
+// `;
+
 export const GET_DB_REGION_BY_ID = gql`
 	query GetDBRegionpById($_id: String!) {
 		getRegionById(_id: $_id) {
@@ -31,16 +37,7 @@ export const GET_DB_REGION_BY_ID = gql`
 			capital
 			leader
 			parentRegion
-			subregions{
-				_id
-				owner
-				name
-				capital
-				leader
-				parentRegion
-				subregions
-				landmarks
-			}
+			subregions
 			landmarks
 		}
 	}
