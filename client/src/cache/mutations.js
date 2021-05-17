@@ -124,9 +124,24 @@ export const ADD_REGION = gql`
 `;
 
 export const DELETE_REGION = gql`
-	mutation DeleteRegion($_id: String!) {
-		deleteRegion(_id: $_id)
+	mutation DeleteRegion($_id: String!, $childID: String!) {
+		deleteRegion(_id: $_id, childID: $childID){
+			_id
+			owner
+			name
+			capital
+			leader
+			parentRegion
+			subregions
+			landmarks
+		}
 	}
+`;
+
+export const UPDATE_REGION_FIELD = gql`
+mutation UpdateRegionField($_id: String!, $field: String!, $value: String!) {
+	updateRegionField(_id: $_id, field: $field, value: $value)
+}
 `;
 
 // export const UPDATE_REGION_FIELD = gql`

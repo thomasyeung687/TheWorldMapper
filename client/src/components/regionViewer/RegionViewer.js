@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation } 	from '@apollo/client';
+import { useQuery, useLazyQuery } 	from '@apollo/client';
 import * as queries 	from '../../cache/queries';
 import * as mutations 	from '../../cache/mutations';
 import CreateMap                        from '../modals/CreateNewMap';
@@ -9,8 +9,31 @@ import MapEntry         from '../maps/MapEntry';
 import Globe from '../../Images/Globe.png'
 
 const RegionViewer = (props) => {
-    const parentRegion = props.activeRegion;
-    const region = props.activeSSRegion;
+
+    const { error, loading, data, refetch } = useQuery(queries.GET_DB_REGION_BY_ID, {variables: {_id: props.activeRegionId}});
+
+    let parentRegion = null;
+
+    if(error) { console.log(error); }
+    if(loading) { console.log(loading); }
+    if(data) { 
+        console.log(data);
+        let { getRegionById } = data;
+        if(getRegionById !== null) { parentRegion = getRegionById; }
+    }
+
+    const { error:error2, loading:loading2, data:data2, refetch:refetch2 } = useQuery(queries.GET_DB_REGION_BY_ID, {variables: {_id: props.activeSSRegionId}});
+
+    let region = null;
+
+    if(error2) { console.log(error2); }
+    if(loading2) { console.log(loading2); }
+    if(data2) { 
+        console.log(data2);
+        let { getRegionById } = data2;
+        if(getRegionById !== null) { region = getRegionById; }
+    }
+    
     console.log(region);
 
     let name = region ? region.name : "";

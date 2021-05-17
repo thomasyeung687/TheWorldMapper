@@ -19,7 +19,7 @@ const Login = (props) => {
 	}
 
 	const handleLogin = async (e) => {
-		const { loading, error, data } = await Login({ variables: { ...input }, refetchQueries: [{query: queries.GET_DB_MAPS}] });
+		const { loading, error, data } = await Login({ variables: { ...input }});
 		if (loading) { toggleLoading(true) };
 		if (data.login._id === null) {
 			displayErrorMsg(true);

@@ -25,6 +25,7 @@ const typeDefs = gql `
 	extend type Query {
 		getAllMaps: [Region]
 		getRegionById(_id: String!): Region
+		getAllChildren(subregionIds: [String]): [Region]
 	}
 	extend type Mutation {
 		addMap(map: RegionInput!): String
@@ -32,7 +33,8 @@ const typeDefs = gql `
 		updateMapName(_id: String!, value: String!): String
 
 		addRegion(region: RegionInput!): Region
-		deleteRegion(_id: String!): Region
+		deleteRegion(_id: String!, childID: String!): Region
+		updateRegionField(_id: String!, field: String!, value: String!): Boolean
 	}
 	
 	input RegionInput {

@@ -62,6 +62,20 @@ module.exports = {
 				return region;
 			}else return ({});
 		},
+		getAllChildren: async (_, args) => {
+			const { subregionIds } = args;
+			let subregionArr = [];
+			console.log(subregionIds);
+			subregionIds.map( async (id) => {
+				console.log("in map",id);
+				const objectID = new ObjectId(id)
+				const region = await Region.findOne({_id: objectID});
+				console.log(region);
+				subregionArr = subregionArr.concat(region);
+			})
+			console.log(subregionArr);
+			return subregionArr;
+		}
 	},
 	Mutation: {
 		/** 
@@ -107,9 +121,14 @@ module.exports = {
 
 		addRegion: async (_, args) => {
 			console.log("addRegion-resolver");
-			const { region } = args;
-			const objectId = new ObjectId();
-			const { name, owner, subregions, capital, leader, landmarks, parentRegion } = region;
+			const { region, index} = args;
+			const { name, owner, subregions, capital, leader, landmarks, parentRegion, _id} = region;
+			
+			let objectId = _id;
+			if(objectId == ""){
+				objectId = new ObjectId();
+			}
+
 			const newRegion = new Region({
 				_id: objectId,
 				// id: id,
@@ -121,25 +140,29 @@ module.exports = {
 				subregions: subregions,
 				landmarks: landmarks
 			});
-			const updated = await newRegion.save();
-			if(updated){
+			const created = await newRegion.save();
+			if(created){
 				const parent =  await Region.findOne({_id: parentRegion})
 				if(parent){
 					console.log("found parent", parent)
 					console.log("Obj id", objectId)
 					let subregions = parent.subregions;//adding subregionid to parent region in db
 					console.log(subregions);
-					subregions.push(objectId)
+					
+					//for deleting to put the region back to where it was.
+					if(index < 0) subregions.push(objectId);
+   					else subregions.splice(index, 0, objectId);
+
 					console.log(subregions);
 					const updated = await Region.updateOne({_id: parentRegion}, {subregions: subregions});
 					const parentreFetched =  await Region.findOne({_id: parentRegion})
 					if(updated){
 						console.log("Sucessfully updated parent in backend")
-						return parentreFetched;
+						return created;
 					}else{
 						console.log("Coundn't update parent Deleting region created")
 						const deleted = Region.deleteOne({_id: objectId})
-						return (parent)
+						return (null)
 					}
 				}else{
 					console.log("Coundn't find parent Deleting region created")
@@ -149,11 +172,36 @@ module.exports = {
 			}else return (null);
 		},
 		deleteRegion: async (_, args) => {
-			const { _id } = args;
+			console.log("hello");
+			const { _id, childID} = args;
+			const parentId = new ObjectId(_id);
+			let childId1 = new ObjectId(childID);
+
+			const parentRegion = await Region.findOne({_id: parentId});
+			console.log(parentRegion)
+			let pSubregions = parentRegion.subregions;
+			pSubregions = pSubregions.filter(_id =>_id !== childID);
+			console.log(pSubregions)
+			const updated = await Region.updateOne({_id: parentId}, {subregions: pSubregions}); //update parent with new subregions array
+			if(updated){
+				console.log("updated parent region")
+			}else{
+				console.log("failed update parent region")
+			}
+			const deletedRegion = await Region.findOne({_id: childId1});
+			const deleted = await Region.deleteOne({_id: childId1});
+
+			if(deleted) return deletedRegion;
+			else return null;
+		},
+		updateRegionField: async (_, args) => {
+			console.log("editRegionField");
+			const { _id, field, value} = args;
 			const objectId = new ObjectId(_id);
-			const deleted = await Region.deleteOne({_id: objectId});
-			if(deleted) return true;
+			const updated = await Region.updateOne({_id:objectId}, {[field]: value});
+			if(updated) return true;
 			else return false;
 		},
+
 	}
 }

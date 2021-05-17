@@ -87,7 +87,8 @@ module.exports = {
 			// const user = await User.findOne({email: email});
 			console.log("user id from update: ", _id); //terminal
 			const alreadyRegistered = await User.findOne({email: email});
-			if(alreadyRegistered) {
+			const userfetch =  await User.findOne({_id: _id});
+			if(alreadyRegistered && userfetch.email != email) {
 				console.log('Email already registered.');
 				return(new User({
 					_id: '',

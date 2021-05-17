@@ -43,6 +43,21 @@ export const GET_DB_REGION_BY_ID = gql`
 	}
 `;
 
+export const GET_ALL_CHILDREN_REGIONS = gql`
+	query GetAllChildren($subregionIds: [String]) {
+		getAllChildren(subregionIds: $subregionIds) {
+			_id
+			owner
+			name
+			capital
+			leader
+			parentRegion
+			subregions
+			landmarks
+		}
+	}
+`;
+
 // export const GET_DB_TODOS = gql`
 // 	query GetDBTodos {
 // 		getAllTodos {

@@ -12,64 +12,46 @@ import Globe from '../../Images/Globe.png'
 const MapsScreen = (props) => {
     const [showCreateMap, toggleShowCreateMap] 	= useState(false);
     
-
-    const [DeleteMap] 			    = useMutation(mutations.DELETE_MAP);
-    const [UpdateMapName] 			= useMutation(mutations.UPDATE_MAP_NAME);
+    console.log("mapscreen")
+    
 
     const setShowCreateMap = () => {
 		toggleShowCreateMap(!showCreateMap);
 		console.log("create map")
 	}
     
-    console.log("MapsScreen",props.maps)
-
-    const { loading, error, data, refetch } = useQuery(queries.GET_DB_MAPS);
-	if(loading) { console.log(loading, 'loading'); }
-	if(error) { console.log(error, 'error'); }
-	if(data) {
-        // if(props.maps.length === 0){
-            props.setMaps(data.getAllMaps) 
-        // } 
-    }
-	if(!data){console.log("not dataMap")}
-
-    const deleteMap = async (_id) => {
-		DeleteMap({ variables: { _id: _id }, refetchQueries: [{ query: queries.GET_DB_MAPS }] });
-		refetch();//refetches maps using refetch from line 28
-        props.setMaps(data.getAllMaps);
-	};
-
-	const refetchMaps = async (refetch) => {//used when we need to refetch while updating a map
-		const { loading, error, data } = await refetch();
-		if (data) {
-			props.setMaps(data.getAllMaps) // where is this defined?
-			if (props.activeMap._id) {
-				let tempID = props.activeMap._id;
-				let list = props.maps.find(map => map._id === tempID);
-				props.setActiveMap(list);
-			}
-		}
-	}
-
-    const editMapName = async (_id, value) => {
-        UpdateMapName({ variables: { _id: _id, value: value }, refetchQueries: [{ query: queries.GET_DB_MAPS }] });
-        refetch();//refetches maps using refetch from line 28
-    }
+    // console.log("MapsScreen",props.maps)
 
     let maps = props.maps;
-    const mostRecentMapToTop = (id) => {
-		console.log("mostRecentMapToTop", id);
+
+	// const refetchMaps = async (refetch) => {//used when we need to refetch while updating a map
+	// 	const { loading, error, data } = await refetch();
+	// 	if (data) {
+	// 		props.setMaps(data.getAllMaps) // where is this defined?
+	// 		if (props.activeMap._id) {
+	// 			let tempID = props.activeMap._id;
+	// 			let list = props.maps.find(map => map._id === tempID);
+	// 			props.setActiveMap(list);
+	// 		}
+	// 	}
+	// }
+
+    
+
+    
+    // const mostRecentMapToTop = (id) => {
+	// 	console.log("mostRecentMapToTop", id);
 		
-		let recentMap = maps.filter((map)=>{return map._id === id});
-		let restMap = maps.filter((map)=>{return map._id !== id});
+	// 	let recentMap = maps.filter((map)=>{return map._id === id});
+	// 	let restMap = maps.filter((map)=>{return map._id !== id});
 
-		let newMap = [...recentMap, ...restMap];
-		console.log(newMap);
-        maps = newMap;
-		props.setMaps(newMap);
-	}
+	// 	let newMap = [...recentMap, ...restMap];
+	// 	console.log(newMap);
+    //     maps = newMap;
+	// 	props.setMaps(newMap);
+	// }
 
-    console.log("mapscreen")
+    
     return (
         <div className="mainContainer">
             <div className="yourMapsContainer">
@@ -78,11 +60,13 @@ const MapsScreen = (props) => {
                 </div>
                 <div className="yourMapsMainContent">
                     <div className="yourMapsLeftBox">
-                        {maps.map( map => (<MapEntry name={map.name} _id={map._id}
+                        {maps.map( map => (<MapEntry 
+                        key={map._id}
+                        name={map.name} _id={map._id}
                         updateListField={props.updateListField}  
-                        deleteMap ={deleteMap}
-                        editMapName = {editMapName}
-                        setActiveRegion={props.setActiveRegion}
+                        deleteMap ={props.deleteMap}
+                        editMapName = {props.editMapName}
+                        setActiveRegionId={props.setActiveRegionId}
                         handleSetActiveMap={props.handleSetActiveMap}
                         />)    )}
                     </div>
@@ -99,7 +83,7 @@ const MapsScreen = (props) => {
             {
 			showCreateMap && (<CreateMap 
 				// refetchTodos={refetch} 
-                refetchMaps = {refetch}
+                refetchMaps = {props.refetchMaps}
 				setShowCreateMap={setShowCreateMap} 
 				setActiveMap = {props.setActiveMap}
 				user = {props.user} />)

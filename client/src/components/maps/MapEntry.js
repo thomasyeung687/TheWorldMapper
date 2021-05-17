@@ -28,6 +28,26 @@ const SidebarEntry = (props) => {
         const { name, value } = e.target;
         props.editMapName(props._id, value)
     };
+
+    let timer = 0;
+    let delay = 200;
+    let prevent = false;
+
+    const handleClick = (e) => {
+      let me = this;
+      timer = setTimeout(function() {
+        if (!prevent) {
+            setActiveHelperFunction();
+        }
+        prevent = false;
+      }, delay);
+    }
+    const handleDoubleClick = (e) => {
+      clearTimeout(timer);
+      prevent = true;
+      handleEditing(e);
+    }
+
     // console.log("me",props._id)
     // const entryStyle = props.id === props.activeid ? 'list-item list-item-active' : 'list-item ';
     const entryStyle = 'mapEntryContainer ';
@@ -80,7 +100,7 @@ const SidebarEntry = (props) => {
     return (
         <>
         <WNavItem 
-            className={entryStyle} onDoubleClick={handleEditing} 
+            className={entryStyle} 
             hoverAnimation="lighten"
         >
             {
@@ -88,7 +108,8 @@ const SidebarEntry = (props) => {
                     :   
                     <>
                     <div className="MapEntryContentWrapper">
-                        <div className="MapEntryClickable " onClick={() => { console.log("entry clicked"); setActiveHelperFunction() }}>
+                        <div className="MapEntryClickable" onDoubleClick={ handleDoubleClick } 
+                            onClick={ handleClick } >
                             <div className='list-text'>
                                 {props.name}
                             </div>
