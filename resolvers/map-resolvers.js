@@ -65,14 +65,14 @@ module.exports = {
 		getAllChildren: async (_, args) => {
 			const { subregionIds } = args;
 			let subregionArr = [];
-			console.log(subregionIds);
-			subregionIds.map( async (id) => {
+			console.log("getAllChildren",subregionIds);
+			for( const id of subregionIds){
 				console.log("in map",id);
 				const objectID = new ObjectId(id)
 				const region = await Region.findOne({_id: objectID});
 				console.log(region);
 				subregionArr = subregionArr.concat(region);
-			})
+			}
 			console.log(subregionArr);
 			return subregionArr;
 		}
@@ -202,6 +202,19 @@ module.exports = {
 			if(updated) return true;
 			else return false;
 		},
+		updateSubregionArray: async (_, args) => {
+			const {_id, subregionsArr} = args;
+			console.log(_id, subregionsArr);
+			const objID = new ObjectId(_id);
+			const updated = await Region.updateOne({_id: objID}, {subregions: subregionsArr});
+			if(updated){
+				const newRegion = await Region.findOne({_id: objID});
+				console.log(newRegion);
+				return newRegion;
+			}else{
+				return null;
+			}
+		}
 
 	}
 }

@@ -23,28 +23,29 @@ export class UpdateRegionField_Transaction extends jsTPS_Transaction {
     }
 }
 
-/*  Handles item reordering */
-export class ReorderItems_Transaction extends jsTPS_Transaction {
-    constructor(listID, itemID, dir, callback) {
-        super();
-        this.listID = listID;
-        this.itemID = itemID;
-		this.dir = dir;
-		this.revDir = dir === 1 ? -1 : 1;
-		this.updateFunction = callback;
-	}
+export class SortRegion_Transaction extends jsTPS_Transaction {
+    constructor(_id, oldList, newList, callback) {
+		super();
+		this._id = _id;
+		this.oldList = oldList;
+		this.newList = newList;
+        this.updateFunction = callback;
+        console.log("id:"+this.listID);
+        console.log(this.oldList);
+        console.log(this.newList);
+	}	
 
-    async doTransaction() {
-		const { data } = await this.updateFunction({ variables: { itemId: this.itemID, _id: this.listID, direction: this.dir }});
-		return data;
+	async doTransaction() {
+        const {data} = await this.updateFunction({ variables:{_id: this._id, subregionsArr: this.newList} })
+        console.log("Update Completed? "+data);
+        return data;
     }
 
     async undoTransaction() {
-		const {data} = await this.updateFunction({ variables: { itemId: this.itemID, _id: this.listID, direction: this.revDir }});
-		return data;
-
+        const {data} = await this.updateFunction({ variables:{_id: this._id, subregionsArr: this.oldList} })
+        console.log("Update Completed? "+data);
+        return data;
     }
-    
 }
 
 export class EditItem_Transaction extends jsTPS_Transaction {

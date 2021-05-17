@@ -12,7 +12,7 @@ import Globe from '../../Images/Globe.png'
 const MapsScreen = (props) => {
     const [showCreateMap, toggleShowCreateMap] 	= useState(false);
     
-    console.log("mapscreen")
+    // console.log("mapscreen")
     
 
     const setShowCreateMap = () => {

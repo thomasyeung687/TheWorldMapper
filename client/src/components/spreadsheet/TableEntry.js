@@ -1,77 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WButton, WInput, WRow, WCol } from 'wt-frontend';
 import { useQuery, useLazyQuery } 	from '@apollo/client';
 import DeleteModal from '../modals/DeleteModal'
 import * as queries 	from '../../cache/queries';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
-const TableEntry = (props) => {
-
-    const [showDeleteRegion, toggleShowDeleteRegion] = useState(false);
-    
-    const [editingName, toggleNameEdit] = useState(props.editNameBool);
-    const [editingCapital, toggleCapitalEdit] = useState(props.editCapitalBool);
-    const [editingLeader, toggleLeaderEdit] = useState(props.editLeaderBool);
-    // console.log(showDeleteRegion);
-    let edittracker = props.editTracker;
-    // useeffect [] queries no useeffect between.
+// useeffect [] queries no useeffect between.
     //table contents
     //whther onchange rran first or onblur ran first. 
     //onblur click off unfocus, call unblur when moving arrow key. doesnt work. recognize the arrowkey first.
     //onkeydown onkeyup. props. input class. onblur="" onkeydown="down"
+
+    // if(editingLeader == false && props.editTracker == [props.index, 2] ){
+    //     console.log("here5")
+    //     props.updateEditTracker([]);
+    // }else if(editingLeader == true && props.editTracker == []){
+    //     console.log("here2")
+    //     props.updateEditTracker([props.index, 2]);
+    // }    
+const TableEntry = (props) => {
+
+    const [showDeleteRegion, toggleShowDeleteRegion] = useState(false);
+    
+    const [editingName, toggleNameEdit] = useState(false);
+    const [editingCapital, toggleCapitalEdit] = useState(false);
+    const [editingLeader, toggleLeaderEdit] = useState(false);
+    // console.log(showDeleteRegion);
+    
+    let edittracker = props.editTracker;
+    // console.log(props.editTracker);
+    useEffect(() => {
+        console.log("in useeffect")
+        if(edittracker[0] === props.index){
+            if(edittracker[1] === 0){
+                console.log("here 0",props.index)
+                toggleNameEdit(true)
+            }else if(edittracker[1] === 1){
+                console.log("here 1",props.index)
+                toggleCapitalEdit(true)
+            }else if(edittracker[1] === 2){
+                console.log("here 2",props.index)
+                toggleLeaderEdit(true)
+            }else{
+                console.log("here 10000",props.index)
+            }
+        }
+      });
+      //useeffect only renders the first time. 
+    
     const toggleNameEditfunc = () =>{
         toggleNameEdit(!editingName);
-        // if(editingName == false && props.editTracker == [props.index, 0] ){
-        //     console.log("here3")
-        //     props.updateEditTracker([]);
-        // }else if(editingName == true && props.editTracker == []){
-        //     console.log("here0")
-        //     props.updateEditTracker([props.index, 0]);
-        // }
+        props.updateEditTracker([props.index, 0])
     }
     const toggleCapitalEditfunc = () =>{
         toggleCapitalEdit(!editingCapital);
-        // if(editingCapital == false && props.editTracker == [props.index, 1] ){
-        //     console.log("here4")
-        //     props.updateEditTracker([]);
-        // }else if(editingCapital == true && props.editTracker == []){
-        //     console.log("here1")
-        //     props.updateEditTracker([props.index, 1]);
-        // }
+        props.updateEditTracker([props.index, 1])
     }
     const toggleLeaderEditfunc = () =>{
         toggleLeaderEdit(!editingLeader);
-        // if(editingLeader == false && props.editTracker == [props.index, 2] ){
-        //     console.log("here5")
-        //     props.updateEditTracker([]);
-        // }else if(editingLeader == true && props.editTracker == []){
-        //     console.log("here2")
-        //     props.updateEditTracker([props.index, 2]);
-        // }
+        props.updateEditTracker([props.index, 2])
     }
     // console.log("type",typeof props.index,typeof props.editNameBool,typeof props.editCapitalBool,typeof props.editLeaderBool)
     // console.log("props", props.editTracker, props.index, props.editNameBool, props.editCapitalBool, props.editLeaderBool)
     // console.log("state", props.index, editingName, editingCapital, editingLeader)
 
-    // console.log(props._id);
-    const { error, loading, data, refetch } = useQuery(queries.GET_DB_REGION_BY_ID, {variables: {_id: props._id}});
-    let region = null;
 
-    // if(error) { console.log(error); }
-    // if(loading) { console.log(loading); }
-    if(data) { 
-        // console.log(data);
-        let { getRegionById } = data;
-        if(getRegionById !== null) { region = getRegionById; }
-    }
-    const refetchRegions = async (refetch) => {
-        const { loading, error, data } = await refetch();
-        if (data) {
-            region = data.getRegionById;
-        }
-    }
-
-    
+    const region = props.thisRegion;
 
     const setActiveHelperFunction = async() => {
 		props.setActiveRegion(region);
@@ -94,12 +88,11 @@ const TableEntry = (props) => {
         toggleNameEditfunc()
         const newName = e.target.value ? e.target.value : 'No Name';
         const prevName = name;
-        await props.editRegion(region._id, 'name', newName, prevName);
-        const {data} = await refetch();
-        if(data) { 
-            // console.log(data);
-            let { getRegionById } = data;
-            if(getRegionById !== null) { region = getRegionById; }
+        if(newName === prevName){
+            console.log("no change detected");
+        }else{
+            await props.editRegion(region._id, 'name', newName, prevName);
+            props.refetchChildrenFunc();
         }
     };
     
@@ -107,12 +100,11 @@ const TableEntry = (props) => {
         toggleCapitalEditfunc();
         const newCapital = e.target.value ? e.target.value : 'No Capital';
         const prevCapital = capital;
-        await props.editRegion(region._id, 'capital', newCapital, prevCapital);
-        const {data} = await refetch();
-        if(data) { 
-            // console.log(data);
-            let { getRegionById } = data;
-            if(getRegionById !== null) { region = getRegionById; }
+        if(newCapital === prevCapital){
+            console.log("no change detected");
+        }else{
+            await props.editRegion(region._id, 'capital', newCapital, prevCapital);
+            props.refetchChildrenFunc();
         }
     };
 
@@ -120,14 +112,45 @@ const TableEntry = (props) => {
         toggleLeaderEditfunc();
         const newLeader = e.target.value ? e.target.value : "No Leader";
         const prevLeader = leader;
-        await props.editRegion(region._id, 'leader', newLeader, prevLeader);
-        const {data} = await refetch();
-        if(data) { 
-            // console.log(data);
-            let { getRegionById } = data;
-            if(getRegionById !== null) { region = getRegionById; }
+        if(newLeader === prevLeader){
+            console.log("no change detected");
+        }else{
+            await props.editRegion(region._id, 'leader', newLeader, prevLeader);
+            props.refetchChildrenFunc();
         }
     };
+
+    const handleNameEditOnBlur = async (e) => {
+        handleNameEdit(e);
+        props.updateEditTracker([])
+    }
+    const handleCapitalEditOnBlur = async (e) => {
+        handleCapitalEdit(e);
+        props.updateEditTracker([])
+    }
+    const handleLeaderEditOnBlur = async (e) => {
+        handleLeaderEdit(e);
+        props.updateEditTracker([])
+    }
+
+    const handleNameEditonkeyDown = async (e) => {
+        if(e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+            handleNameEdit(e);
+            props.updateEditTracker([])
+        }
+    }
+    const handleCapitalEditonkeyDown = async (e) => {
+        if(e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+            handleCapitalEdit(e);
+            props.updateEditTracker([])
+        }
+    }
+    const handleLeaderEditonkeyDown = async (e) => {
+        if(e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+            handleLeaderEdit(e);
+            props.updateEditTracker([])
+        }
+    }
 
     let timer = 0;
     let delay = 300;
@@ -162,7 +185,8 @@ const TableEntry = (props) => {
                 </div> */}
                 {
                     editingName ? <WInput
-                            className='table-input' onBlur={handleNameEdit}
+                            className='table-input' onBlur={handleNameEditOnBlur}
+                            onKeyDown={handleNameEditonkeyDown}
                             autoFocus={true} defaultValue={name} type='text'
                             wType="outlined" barAnimation="solid" inputClass="table-input-class"
                         />
@@ -179,7 +203,8 @@ const TableEntry = (props) => {
             <WCol size="2">
                 {
                     editingCapital ? <WInput
-                        className='table-input' onBlur={handleCapitalEdit}
+                        className='table-input' onBlur={handleCapitalEditOnBlur}
+                        onKeyDown={handleCapitalEditonkeyDown}
                         autoFocus={true} defaultValue={capital} type='text'
                         wType="outlined" barAnimation="solid" inputClass="table-input-class"
                     />
@@ -193,7 +218,8 @@ const TableEntry = (props) => {
             <WCol size="2">
                 {
                     editingLeader ? <WInput
-                    className='table-input' onBlur={handleLeaderEdit}
+                    className='table-input' onBlur={handleLeaderEditOnBlur}
+                    onKeyDown={handleLeaderEditonkeyDown}
                     autoFocus={true} defaultValue={leader} type='text'
                     wType="outlined" barAnimation="solid" inputClass="table-input-class"
                     />

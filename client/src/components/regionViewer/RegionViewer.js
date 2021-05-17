@@ -58,7 +58,7 @@ const RegionViewer = (props) => {
                     <div className="rv_Text">Region Name: {name}</div>
                     <div className="rv_ParentTextBox">
                         <div className="rv_Text">Parent Region: 
-                            <span className="rv_ParentName_Text" onClick={()=>props.setSSRegion(null)}>{parentName}</span>
+                            <span className="rv_ParentName_Text" onClick={()=>props.setSSRegionId(null)}>{parentName}</span>
                         </div>
                         <div className="rv_editButton"><i className="material-icons">edit</i></div>
                     </div>

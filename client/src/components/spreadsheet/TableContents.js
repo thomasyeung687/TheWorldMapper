@@ -5,15 +5,19 @@ import {GET_DB_REGION_BY_ID} from '../../cache/queries'
 
 const TableContents = (props) => {
     const [showDeleteRegion, toggleShowDeleteRegion] = useState(false)
-    const [editTracker, updateEditTracker] = useState([])// [i, c] //where i is the index of the item currently being editted and c is the column (0=name, 1=capital, 2= leader).
+    const [editTracker, setEditTracker] = useState([])// [i, c] //where i is the index of the item currently being editted and c is the column (0=name, 1=capital, 2= leader).
 
     const setShowDeleteRegion = () =>{
         toggleShowDeleteRegion(!showDeleteRegion);
     }
     
     let region = props.region;
+    let subregions = props.subregions;
     // region.subregion.map(map=>{
-
+    const updateEditTracker = (arr) =>{
+        const newArr = arr
+        setEditTracker(newArr);
+    }
     // })
     
     useEffect(() => {
@@ -46,6 +50,7 @@ const TableContents = (props) => {
                 console.log("down Pressed")
                 if(editTracker !== []){
                     if(editTracker[0] !== region.subregions.length -1 ){
+                        console.log("ArrowDown");
                         const newArr = [editTracker[0]+1, editTracker[1]]
                         updateEditTracker(newArr); //will make the row below it editable.
                     }
@@ -57,33 +62,83 @@ const TableContents = (props) => {
     });
     console.log("editTracker",editTracker);
 
+    // function mapSubregions(){
+    //     if(subregions){
+    //         subregions.map((thisRegion, index) => {
+    //             // let editLeader = false;
+    //             // let editName = false;
+    //             // let editCapital = false;
+    //             // if(editTracker && editTracker[0] === index){
+    //             //     if(editTracker[1] === 0){
+    //             //         editName = true;
+    //             //     }else if(editTracker[1] === 1){
+    //             //         editCapital = true;
+    //             //     }else if(editTracker[1] === 2){
+    //             //         editLeader = true;
+    //             //     }
+    //             //     console.log(index, editName, editCapital, editLeader)
+    //             // }
+    //             return (
+    //             <TableEntry
+    //                 index={index}
+    //                 // key = {editTracker}
+    //                 // indOfLastEntry = {indOfLastEntry}
+    //                 thisRegion = {thisRegion}
+    //                 activeRegion= {region}
+    //                 activeRegionId={props.activeRegionId}
+    //                 setActiveRegionId={props.setActiveRegionId}
+    //                 activeSSRegionId={props.activeSSRegionId} setSSRegionId={props.setSSRegionId}
+    //                 deleteRegion = {props.deleteRegion}
+    //                 editRegion={props.editRegion}
+
+    //                 // editLeaderBool = {editLeader}
+    //                 // editNameBool = {editName}
+    //                 // editCapitalBool = {editCapital}
+
+    //                 editTracker = {editTracker}
+    //                 updateEditTracker={updateEditTracker}
+
+    //                 refetchRegion = {props.refetchRegion}
+    //                 refetchChildrenFunc = {props.refetchChildrenFunc}
+    //                 // deleteItem={props.deleteItem} reorderItem={props.reorderItem}
+    //                 // editItem={props.editItem}
+    //             />
+    //         )})
+    //     }else{
+    //         return (<div></div>)
+    //     }
+    // }
+
     return (
         <>
         <div className=' SSMainContent'>
             
             {
-                region ?
-                region.subregions.map((_id, index) => {
-                    let editLeader = false;
-                    let editName = false;
-                    let editCapital = false;
+                subregions ?
+                subregions.map((thisRegion, index) => {
+                    let key = true;
+                    // let editLeader = false;
+                    // let editName = false;
+                    // let editCapital = false;
+                    // if(editTracker && editTracker[0] === index){
+                    //     if(editTracker[1] === 0){
+                    //         editName = true;
+                    //     }else if(editTracker[1] === 1){
+                    //         editCapital = true;
+                    //     }else if(editTracker[1] === 2){
+                    //         editLeader = true;
+                    //     }
+                    //     console.log(index, editName, editCapital, editLeader)
+                    // }
                     if(editTracker && editTracker[0] === index){
-                        if(editTracker[1] === 0){
-                            editName = true;
-                        }else if(editTracker[1] === 1){
-                            editCapital = true;
-                        }else if(editTracker[1] === 2){
-                            editLeader = true;
-                        }
-                        console.log(index, editName, editCapital, editLeader)
+                        key = false;
                     }
                     return (
                     <TableEntry
                         index={index}
-                        num = {index}
-                        key = {index}
+                        // key = {editTracker}
                         // indOfLastEntry = {indOfLastEntry}
-                        _id={_id}
+                        thisRegion = {thisRegion}
                         activeRegion= {region}
                         activeRegionId={props.activeRegionId}
                         setActiveRegionId={props.setActiveRegionId}
@@ -91,14 +146,15 @@ const TableContents = (props) => {
                         deleteRegion = {props.deleteRegion}
                         editRegion={props.editRegion}
 
-                        editLeaderBool = {editLeader}
-                        editNameBool = {editName}
-                        editCapitalBool = {editCapital}
+                        // editLeaderBool = {editLeader}
+                        // editNameBool = {editName}
+                        // editCapitalBool = {editCapital}
 
                         editTracker = {editTracker}
                         updateEditTracker={updateEditTracker}
 
                         refetchRegion = {props.refetchRegion}
+                        refetchChildrenFunc = {props.refetchChildrenFunc}
                         // deleteItem={props.deleteItem} reorderItem={props.reorderItem}
                         // editItem={props.editItem}
                     />
@@ -106,6 +162,7 @@ const TableContents = (props) => {
                 )
                 :
                 <div></div>
+                // mapSubregions()
             }
         </div>
         </>

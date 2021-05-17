@@ -25,14 +25,24 @@ const MainContents = (props) => {
             let { getRegionById } = data;
             if(getRegionById !== null) { region = getRegionById; }
         }
+        console.log("refetched", region);
     }
-    let subregionsIds = region.subregions;
-    const {loading:loadingChildren, error:errorChildren, data:dataChildren, refetch:refetchChildren} = useQuery(GET_ALL_CHILDREN_REGIONS, {variables: {subregionIds: subregionsIds}})
+
+    let subregionsIds = region ? region.subregions : null;
+    // console.log(subregionsIds);
+    const {loading:loadingChildren, error:errorChildren, data:dataChildren, refetch:refetchChildren} = useQuery(GET_ALL_CHILDREN_REGIONS, 
+        {skip: !subregionsIds, variables: {subregionIds: subregionsIds}})
     let subregions = dataChildren ? dataChildren.getAllChildren : [];
     
-    console.log(region);
-    console.log(subregions);
+    // console.log(region);
+    // console.log(subregions);
     console.log(props.undoSize(), props.redoSize());
+
+    const refetchChildrenFunc = async () => {
+        const {data} = await refetchChildren();
+        subregions = data ? data.getAllChildren : [];
+        console.log("refetched", subregions);
+    }
 
     // const createNewRegion = async () => {
     //     console.log("createNewRegion")
@@ -73,16 +83,20 @@ const MainContents = (props) => {
             <div className='SSContainer' >
                 <TableHeader
                     addItem={props.addItem}
+                    SortSubregions={props.SortSubregions}
                     setShowDelete={props.setShowDelete} setActiveList={props.setActiveList}
                     region = {region}
+                    subregions = {subregions}
                     
                     refetchRegion = {refetchRegion}
+                    refetchChildrenFunc = {refetchChildrenFunc}
 
                     undo = {props.undo} redo = {props.redo}
                     undoSize={props.undoSize} redoSize={props.redoSize}
                 />
                 <TableContents
                     region = {region}
+                    subregions = {subregions}
                     activeRegionId={props.activeRegionId}
                     setActiveRegionId={props.setActiveRegionId}
                     activeSSRegionId={props.activeSSRegionId} setSSRegionId={props.setSSRegionId}
@@ -90,6 +104,7 @@ const MainContents = (props) => {
                     editRegion={props.editRegion}
 
                     refetchRegion = {refetchRegion}
+                    refetchChildrenFunc = {refetchChildrenFunc}
                     // deleteItem={props.deleteItem} reorderItem={props.reorderItem}
                     // editItem={props.editItem}
                 />

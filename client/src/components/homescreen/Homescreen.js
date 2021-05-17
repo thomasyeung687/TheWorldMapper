@@ -23,7 +23,7 @@ import { UpdateRegionField_Transaction,
 	UpdateRegionSubregions_Transaction, 
 	ReorderItems_Transaction, 
 	EditItem_Transaction, 
-	SortItems_Transaction} 				from '../../utils/jsTPS';
+	SortItems_Transaction, SortRegion_Transaction} 				from '../../utils/jsTPS';
 import { isNetworkRequestInFlight } from '@apollo/client/core/networkStatus';
 
  
@@ -76,11 +76,12 @@ const Homescreen = (props) => {
 	const [DeleteRegion] 			= useMutation(mutations.DELETE_REGION);
 	const [AddRegion] 				= useMutation(mutations.ADD_REGION);
 	const [UpdateRegionField]		= useMutation(mutations.UPDATE_REGION_FIELD);
+	const [UpdateSubRegionsArray] 	= useMutation(mutations.UPDATE_SUBREGIONS_ARRAY);
 
 	//for navbar
 	const { loading, error, data, refetch:refetchMaps } = useQuery(queries.GET_DB_MAPS);
-	if(loading) { console.log(loading, 'loading'); }
-	if(error) { console.log(error, 'error'); }
+	// if(loading) { console.log(loading, 'loading'); }
+	// if(error) { console.log(error, 'error'); }
 	if(data) {
         // if(props.maps.length === 0){
             maps = data.getAllMaps
@@ -216,6 +217,78 @@ const Homescreen = (props) => {
 		props.tps.addTransaction(transaction);
 		await tpsRedo();
 	}
+
+	const SortSubregions = async (sortingMethod, subregions) => {
+		console.log("SortSubregions method sorting ",subregions, "by "+sortingMethod);
+
+		let oldList = [];
+		let newList = [];
+
+		for(let i = 0; i < subregions.length; i++){
+			let region = subregions[i];
+			let newRegion = {_id: region._id,  name : region.name, capital : region.capital, leader : region.leader};
+			oldList.push(newRegion);
+			newList.push(newRegion);
+		}
+
+
+		let sortIncreasing = true;
+
+		if (isSorted(subregions, sortingMethod)) {
+		  sortIncreasing = false;
+		}
+
+		let compareFunction = createCompareFunction(sortIncreasing, sortingMethod);
+
+		newList = newList.sort(compareFunction);
+
+		console.log("newList", newList);
+		console.log("oldList", oldList);
+
+		let newListIDs = []
+		let oldListIDs = []
+		for(let i = 0; i < subregions.length; i++){
+			newListIDs = newListIDs.concat(newList[i]._id)
+			oldListIDs = oldListIDs.concat(oldList[i]._id)
+		}
+
+		// console.log(oldList);
+		// console.log(newList);
+
+		let transaction = new SortRegion_Transaction(activeRegionId+"", oldListIDs, newListIDs, UpdateSubRegionsArray);
+		props.tps.addTransaction(transaction);
+		await tpsRedo();
+	  }
+
+	  function isSorted(itemsToTest, sortingMethod) {
+		for (let i = 0; i < itemsToTest.length - 1; i++) {
+		  if (itemsToTest[i][sortingMethod] > itemsToTest[i + 1][sortingMethod])
+			return false;
+		}
+		return true;
+	  }
+
+	  const createCompareFunction = (isIncreasing, sortingMethod)=>{
+		  return function (item1, item2){
+			  let value1 = item1[sortingMethod];
+			  let value2 = item2[sortingMethod];
+			  if(value1 < value2){
+				  if(isIncreasing){
+					return -1;
+				  }else{
+					  return 1;
+				  }
+			  }else if(value1 === value2){
+				  return 0;
+			  }else if(value1 > value2){
+				if(isIncreasing){
+					return 1;
+				  }else{
+					  return -1;
+				  }
+			  }
+		  }
+	  }
 	
 
 	// const handleSetActiveMap = async (id) => {
@@ -268,9 +341,21 @@ const Homescreen = (props) => {
 		setActiveRegionId(recentMap[0]._id);
 		clearAllTransactions()
 	}
+	const handleSetActiveRegion = (id) =>{
+		// console.log("handleSetActiveRegion", id);
 
-	console.log(maps);
-	console.log("active Region", activeRegionId);
+		setActiveRegionId(id);
+		clearAllTransactions()
+	}
+	const handleSetActiveSSRegion = (id) =>{
+		// console.log("handleSetActiveSSRegion", id);
+
+		setSSRegionId(id);
+		clearAllTransactions()
+	}
+
+	// console.log(maps);
+	// console.log("active Region", activeRegionId);
 
 	return(
 		<>
@@ -331,10 +416,11 @@ const Homescreen = (props) => {
 						addItem = {addRegion}
 						fetchUser={props.fetchUser} user={props.user} 
 						activeRegionId={activeRegionId}
-						setActiveRegionId={setActiveRegionId}
-						activeSSRegionId={activeSSRegionId} setSSRegionId={setSSRegionId}
+						setActiveRegionId={handleSetActiveRegion}
+						activeSSRegionId={activeSSRegionId} setSSRegionId={handleSetActiveSSRegion}
 						deleteRegion = {deleteRegion}
 						editRegion={editRegion}
+						SortSubregions={SortSubregions}
 
 						undo={tpsUndo} redo={tpsRedo}
 						undoSize={getUndoSize} redoSize={getRedoSize}
@@ -350,7 +436,7 @@ const Homescreen = (props) => {
 						fetchUser={props.fetchUser} user={props.user} 
 						activeRegionId={activeRegionId}
 						setActiveRegionId={setActiveRegionId}
-						activeSSRegionId={activeSSRegionId} setSSRegionId={setSSRegionId}
+						activeSSRegionId={activeSSRegionId} setSSRegionId={handleSetActiveSSRegion}
 
 						tpsUndo={tpsUndo} tpsRedo={tpsRedo}
 						getUndoSize={getUndoSize} getRedoSize={getRedoSize}
