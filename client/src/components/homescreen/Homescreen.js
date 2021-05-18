@@ -22,8 +22,8 @@ import * as queries 	from '../../cache/queries';
 import { UpdateRegionField_Transaction, 
 	UpdateRegionSubregions_Transaction, 
 	ReorderItems_Transaction, 
-	EditItem_Transaction, 
-	SortItems_Transaction, SortRegion_Transaction} 				from '../../utils/jsTPS';
+	ChangeParentRegion_Transaction, 
+	UpdateRegionLandmarks_Transaction, SortRegion_Transaction} 				from '../../utils/jsTPS';
 import { isNetworkRequestInFlight } from '@apollo/client/core/networkStatus';
 
  
@@ -77,6 +77,8 @@ const Homescreen = (props) => {
 	const [AddRegion] 				= useMutation(mutations.ADD_REGION);
 	const [UpdateRegionField]		= useMutation(mutations.UPDATE_REGION_FIELD);
 	const [UpdateSubRegionsArray] 	= useMutation(mutations.UPDATE_SUBREGIONS_ARRAY);
+	const [UpdateRegionLandmarks]	= useMutation(mutations.UPDATE_REGION_LANDMARKS);
+	const [UpdateRegionParent] 		= useMutation(mutations.UPDATE_REGION_PARENT);
 
 	//for navbar
 	const { loading, error, data, refetch:refetchMaps } = useQuery(queries.GET_DB_MAPS);
@@ -258,38 +260,51 @@ const Homescreen = (props) => {
 		let transaction = new SortRegion_Transaction(activeRegionId+"", oldListIDs, newListIDs, UpdateSubRegionsArray);
 		props.tps.addTransaction(transaction);
 		await tpsRedo();
-	  }
+	}
 
-	  function isSorted(itemsToTest, sortingMethod) {
+	function isSorted(itemsToTest, sortingMethod) {
 		for (let i = 0; i < itemsToTest.length - 1; i++) {
-		  if (itemsToTest[i][sortingMethod] > itemsToTest[i + 1][sortingMethod])
+			if (itemsToTest[i][sortingMethod] > itemsToTest[i + 1][sortingMethod])
 			return false;
 		}
 		return true;
-	  }
+	}
 
-	  const createCompareFunction = (isIncreasing, sortingMethod)=>{
-		  return function (item1, item2){
-			  let value1 = item1[sortingMethod];
-			  let value2 = item2[sortingMethod];
-			  if(value1 < value2){
-				  if(isIncreasing){
-					return -1;
-				  }else{
-					  return 1;
-				  }
-			  }else if(value1 === value2){
-				  return 0;
-			  }else if(value1 > value2){
+	const createCompareFunction = (isIncreasing, sortingMethod)=>{
+		return function (item1, item2){
+			let value1 = item1[sortingMethod];
+			let value2 = item2[sortingMethod];
+			if(value1 < value2){
 				if(isIncreasing){
+				return -1;
+				}else{
 					return 1;
-				  }else{
-					  return -1;
-				  }
-			  }
-		  }
-	  }
+				}
+			}else if(value1 === value2){
+				return 0;
+			}else if(value1 > value2){
+			if(isIncreasing){
+				return 1;
+				}else{
+					return -1;
+				}
+			}
+		}
+	}
 	
+	const addDeleteEditLandmark = async (_id, landmark, opcode, newLandmark) => { // opcodes: 0 - delete, 1 - add 
+		console.log("addLandmark")
+		let transaction = new UpdateRegionLandmarks_Transaction(_id, landmark, opcode, UpdateRegionLandmarks, newLandmark);
+		props.tps.addTransaction(transaction);
+		await tpsRedo();
+	}
+
+	const changeParentRegion = async (_id, newParentId, oldParentId) => { 
+		console.log("changeParentRegion")
+		let transaction = new ChangeParentRegion_Transaction(_id, newParentId, oldParentId, UpdateRegionParent);
+		props.tps.addTransaction(transaction);
+		await tpsRedo();
+	}
 
 	// const handleSetActiveMap = async (id) => {
 	// 	const map = maps.find(map => map._id === id);
@@ -356,6 +371,7 @@ const Homescreen = (props) => {
 
 	// console.log(maps);
 	// console.log("active Region", activeRegionId);
+	console.log(getUndoSize(), getRedoSize());
 
 	return(
 		<>
@@ -437,9 +453,13 @@ const Homescreen = (props) => {
 						activeRegionId={activeRegionId}
 						setActiveRegionId={setActiveRegionId}
 						activeSSRegionId={activeSSRegionId} setSSRegionId={handleSetActiveSSRegion}
+						
 
-						tpsUndo={tpsUndo} tpsRedo={tpsRedo}
-						getUndoSize={getUndoSize} getRedoSize={getRedoSize}
+						addDeleteEditLandmark={addDeleteEditLandmark}
+						changeParentRegion={changeParentRegion}
+
+						undo={tpsUndo} redo={tpsRedo}
+						undoSize={getUndoSize} redoSize={getRedoSize}
 						/>
 					} 
 				/>

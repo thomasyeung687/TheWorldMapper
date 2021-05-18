@@ -1,0 +1,212 @@
+//start of regionViewer Styling
+.rv_Maincontainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  // background-color: blue;
+  padding: 75px;
+  padding-bottom: 200px;
+}
+.rv_LeftBox {
+  width: Clamp(350px, 33%, 500px);
+  height: 100%;
+  // background-color: yellow;
+  display: flex;
+  flex-direction: column;
+}
+
+.rv_backForwardButtonsBox {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 35px;
+  // background-color: black;
+}
+
+.rv_backForwardButtons {
+  // background-color: white;
+  width: 35px;
+  height: 35px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.rv_Img {
+  height: 50%;
+  width: auto;
+  margin: 50px;
+}
+
+.rv_TextContainer {
+  padding-top: 20px;
+  width: 100%;
+  height: 500px;
+  // background-color: black;
+
+  font-size: 20px;
+  color: white;
+}
+
+.rv_Text {
+  font-size: 20px;
+  color: white;
+  margin: 10px;
+}
+
+.rv_ParentName_Text {
+  font-size: 20px;
+  color: blue;
+  cursor: pointer;
+}
+
+.rv_ParentTextBox {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.rv_parent_select {
+  font-family: Roboto;
+  //font-size: 14px;
+  font-size: 1.125rem;
+  border: none;
+  background-color: white;
+  color: black;
+}
+
+.rv_editButton {
+  // background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 35px;
+  height: 35px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.rv_editButton:hover {
+  // background-color: white;
+  transition: 0.1s ease-in-out;
+  background-color: silver;
+}
+//Styling of Right box starts here
+
+.rv_RightBox {
+  width: Clamp(350px, 40%, 500px);
+  height: 100%;
+  // background-color: pink;
+}
+
+.rv_landmarksContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  // background-color: yellowgreen;
+}
+
+.rv_landmarks_textbox {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  color: white;
+  font-size: 25px;
+}
+
+.landmarksBox {
+  overflow-y: scroll;
+  scrollbar-width: thin;
+  background-color: black;
+  width: 100%;
+  height: calc(100% - 35px);
+  height: -moz-calc(100% - 35px);
+  display: flex;
+  flex-direction: column;
+  padding-top: 4%;
+  padding-bottom: 4%;
+}
+
+.landmarkText {
+  padding-left: 30px;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+}
+
+.landmarkEntryEditable {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: Clamp(15px, 5%, 30px);
+  color: white;
+}
+
+.landmarkEntryEditable:hover {
+  cursor: pointer;
+  transition: 0.1s ease-in-out;
+  background-color: silver;
+}
+.landmarkTextInput {
+  width: 100%;
+  height: 100%;
+  background-color: gray;
+  color: white !important;
+}
+
+.delteLandmarkx {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: red;
+  font-size: 14px;
+  width: 50px;
+  height: 100%;
+  margin-right: 15px;
+  //   background-color: gray;
+}
+.delteLandmarkx:hover {
+  cursor: pointer;
+  transition: 0.1s ease-in-out;
+  background-color: rgb(155, 153, 153);
+}
+
+.landmarkEntryUnEditable {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: Clamp(15px, 5%, 30px);
+  color: rgb(165, 156, 156);
+}
+
+.landmarkEntryUnEditable:hover {
+  color: rgb(133, 126, 126);
+}
+
+.rv_addNewLandmarksBar {
+  background-color: #404140;
+  display: flex;
+  width: 100%;
+  height: 35px;
+}
+
+.rv_addNewLandmarksBar_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 35px;
+  width: 35px;
+  background-color: gray;
+  cursor: pointer;
+}
+
+.rv_addNewLandmarksBar_input {
+  background-color: #c2c3c3;
+  display: flex;
+  width: 50%;
+  height: 35px;
+  font-size: 20px;
+}

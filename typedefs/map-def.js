@@ -26,6 +26,9 @@ const typeDefs = gql `
 		getAllMaps: [Region]
 		getRegionById(_id: String!): Region
 		getAllChildren(subregionIds: [String]): [Region]
+
+		getAllRegionAbove(_id: String!): [Region]
+		getAllLandmarks(_id: String!): [String]
 	}
 	extend type Mutation {
 		addMap(map: RegionInput!): String
@@ -37,6 +40,8 @@ const typeDefs = gql `
 		updateRegionField(_id: String!, field: String!, value: String!): Boolean
 		
 		updateSubregionArray(_id: String!, subregionsArr: [String]):Region
+		updateRegionLandmarks(_id: String!, landmark: String!, opcode: String!, newLandmark: String!): Boolean
+		updateRegionParent(_id: String!, parentId: String!): Boolean
 	}
 	
 	input RegionInput {

@@ -58,6 +58,27 @@ export const GET_ALL_CHILDREN_REGIONS = gql`
 	}
 `;
 
+export const GET_ALL_REGION_ABOVE = gql`
+	query GetAllRegionAbove($_id: String!) {
+		getAllRegionAbove(_id: $_id) {
+			_id
+			owner
+			name
+			capital
+			leader
+			parentRegion
+			subregions
+			landmarks
+		}
+	}
+`;
+
+export const GET_ALL_LANDMARKS = gql`
+	query GetAllLandmarks($_id: String!) {
+		getAllLandmarks(_id: $_id)
+	}
+`;
+
 // export const GET_DB_TODOS = gql`
 // 	query GetDBTodos {
 // 		getAllTodos {

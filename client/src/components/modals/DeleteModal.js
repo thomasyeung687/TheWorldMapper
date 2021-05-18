@@ -7,9 +7,9 @@ const DeleteModal = (props) => {
 
     let region = props.region;
     const handleDelete = async () => {
-        props.delete(region, props.index);
+        await props.delete(region, props.index);
         props.toggleShowDeleteRegion(!props.showDeleteRegion)
-        props.refetchRegion();
+        await props.refetchRegion();
     }
 
     return (

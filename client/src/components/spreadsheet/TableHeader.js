@@ -28,7 +28,7 @@ const TableHeader = (props) => {
         }else{
             // console.log("undo clicked")
             props.undo();
-            // await props.refetchRegion();
+            await props.refetchRegion();
             await props.refetchChildrenFunc();
         }  
     }
@@ -40,7 +40,7 @@ const TableHeader = (props) => {
         }else{
             // console.log("redo clicked")
             props.redo();
-            // await props.refetchRegion();
+            await props.refetchRegion();
             await props.refetchChildrenFunc();
         }  
     }

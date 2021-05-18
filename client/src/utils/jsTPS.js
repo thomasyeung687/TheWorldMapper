@@ -131,6 +131,78 @@ export class UpdateRegionSubregions_Transaction extends jsTPS_Transaction {
     }
 }
 
+export class ChangeParentRegion_Transaction extends jsTPS_Transaction {
+	constructor(_id, newParentId, oldParentId, UpdateRegionParent) {
+		super();
+		this._id = _id;
+		this.newParentId = newParentId;
+		this.oldParentId = oldParentId;
+		this.UpdateRegionParent = UpdateRegionParent;
+	}	
+
+	async doTransaction() {
+		const { data } = await this.UpdateRegionParent({ variables:{  _id: this._id, parentId: this.newParentId } });
+		return data;
+    }
+
+    async undoTransaction() {
+		const { data } = await this.UpdateRegionParent({ variables:{ _id: this._id, parentId: this.oldParentId } });
+		return data;
+
+    }
+}
+
+
+/*  Handles create/delete of list items */
+export class UpdateRegionLandmarks_Transaction extends jsTPS_Transaction {
+    // opcodes: 0 - delete, 1 - add 
+    constructor(_id, landmark, opcode, adddelfunc, newLandmark) {
+        super();
+		this._id = _id ? _id.toString(): "";
+		this.landmark = landmark;
+        this.adddelfunc = adddelfunc;
+        this.opcode = opcode;
+        this.newLandmark = newLandmark;
+    }
+
+    async doTransaction() {
+        console.log("Do UpdateRegionLandmarks_Transaction",this.opcode,this._id, this.landmark, this.newLandmark );
+		let data;
+        
+        if(this.opcode === 0){ //deleting
+            let data1 = await this.adddelfunc({variables: {_id: this._id, landmark: this.landmark, opcode: "0", newLandmark: this.newLandmark}}) //deleting landmark
+            data = data1;
+        }else if(this.opcode === 1){//adding
+            let data1 = await this.adddelfunc({variables: {_id: this._id, landmark: this.landmark, opcode: "1", newLandmark: this.newLandmark}}) //adding landmark
+            data = data1;
+        }else if(this.opcode === 2){//editing
+            let data1 = await this.adddelfunc({variables: {_id: this._id, landmark: this.landmark, opcode: "2", newLandmark: this.newLandmark}}) //editing landmark
+            data = data1;
+        }
+                            // else{
+        //     this.subregionsArr = data.deleteRegion;
+        //     console.log(this.subregionsArr)
+        // }
+		return data;
+    }
+    // Since delete/add are opposites, flip matching opcode
+    async undoTransaction() {
+        console.log("unDo UpdateRegionLandmarks_Transaction",this.opcode,this._id, this.landmark, this.newLandmark );
+        let data;
+        if(this.opcode === 0){//adding back deleted
+            let data1 = await this.adddelfunc({variables: {_id: this._id, landmark: this.landmark, opcode: "1", newLandmark: this.newLandmark}}) //adding back landmark
+            data = data1;
+        }else if(this.opcode === 1){//deleting added landmark
+            let data1 = await this.adddelfunc({variables: {_id: this._id, landmark: this.landmark, opcode: "0", newLandmark: this.newLandmark}}) //deleting added landmark
+            data = data1;
+        }else if(this.opcode === 2){//reverting editted landmark.
+            let data1 = this.adddelfunc({variables: {_id: this._id, landmark: this.newLandmark, opcode: "2", newLandmark: this.landmark}}) //editing back landmark
+            data = data1;
+        }
+        return data;
+    }
+}
+
 
 
 

@@ -7,60 +7,213 @@ import CreateMap                        from '../modals/CreateNewMap';
 import MapEntry         from '../maps/MapEntry';
 
 import Globe from '../../Images/Globe.png'
+import LandmarkEntry from './landmarkEntry';
+import { WButton, WRow, WCol } from 'wt-frontend';
 
 const RegionViewer = (props) => {
 
-    const { error, loading, data, refetch } = useQuery(queries.GET_DB_REGION_BY_ID, {variables: {_id: props.activeRegionId}});
+    const [landmarkName, setLandmarkName] = useState('')
+    const [changeParent, toggleChangeParent] = useState(false);
 
-    let parentRegion = null;
-
-    if(error) { console.log(error); }
-    if(loading) { console.log(loading); }
-    if(data) { 
-        console.log(data);
-        let { getRegionById } = data;
-        if(getRegionById !== null) { parentRegion = getRegionById; }
-    }
+    
 
     const { error:error2, loading:loading2, data:data2, refetch:refetch2 } = useQuery(queries.GET_DB_REGION_BY_ID, {variables: {_id: props.activeSSRegionId}});
 
     let region = null;
-
-    if(error2) { console.log(error2); }
-    if(loading2) { console.log(loading2); }
     if(data2) { 
         console.log(data2);
         let { getRegionById } = data2;
         if(getRegionById !== null) { region = getRegionById; }
     }
-    
-    console.log(region);
+    // let _id = region ? region.parentRegion : null;
 
+    const { error, loading, data, refetch } = useQuery(queries.GET_DB_REGION_BY_ID, {skip: !region, variables: {_id: region ? region.parentRegion : null}});
+    
+
+    let parentRegion = null;
+    
+    if(data) { 
+        console.log(data);
+        let { getRegionById } = data;
+        if(getRegionById !== null) { parentRegion = getRegionById; }
+    }
+    
+    
     let name = region ? region.name : "";
     let parentName = parentRegion ? parentRegion.name : "";
     let capital = region ? region.capital : "";
     let leader = region ? region.leader : "";
     let num = region ? region.subregions.length : 0;
-    if(region){
-        console.log(region.subregions, region.subregions.length)
+
+    const { error:error4, loading:loading4, data:data4, refetch:refetch4 } = useQuery(queries.GET_ALL_LANDMARKS, {variables: {_id: props.activeSSRegionId}}); 
+    let thisRegionslandmarks = region ? region.landmarks : [];
+    let landmarksArr = data4 ? data4.getAllLandmarks : [];
+
+    // console.log(landmarksArr);
+
+    
+    const { error:error3, loading:loading3, data:data3, refetch:refetch3 } = useQuery(queries.GET_ALL_REGION_ABOVE, {variables: {_id: props.activeSSRegionId}}); 
+
+    if(loading3){console.log("loading parentRegionCandidatesdata")}
+    if(error3){console.log("error parentRegionCandidatesdata", error3)}
+    let parentRegionCandidatesdata =  data3 ? data3.getAllRegionAbove : [];
+
+    let parentRegionCandidates =  {};
+    for(let i = 0; i < parentRegionCandidatesdata.length; i++){
+        const reg = parentRegionCandidatesdata[i];
+        parentRegionCandidates[reg.name] = reg._id;
     }
-    console.log(num);
-    console.log("RegionViewer")
+    
+
+    // console.log("parentRegionCandidatesdata", parentRegionCandidatesdata)
+    // console.log("parentRegionCandidates", parentRegionCandidates)
+    
+    
+    
+
+
+    const refetchSSRegion = async () =>{
+        const {data} = await refetch2();
+        region = data.getRegionById;
+        console.log("refetched SSRegion",region);
+    }
+
+    const refetchRegionsAbove = async () => {
+        const {data} = await refetch3();
+        parentRegionCandidatesdata =  data ? data.getAllRegionAbove : [];
+        parentRegionCandidates =  {};
+        for(let i = 0; i < parentRegionCandidatesdata.length; i++){
+            const reg = parentRegionCandidatesdata[i];
+            parentRegionCandidates[reg.name] = reg._id;
+        }
+        console.log("refetched refetchRegionsAbove:", parentRegionCandidates)
+    }
+
+    const refetchLandmarks = async () => {
+        const {data} = await refetch4();
+        landmarksArr = data.getAllLandmarks;
+        console.log("refetched landmarks:", landmarksArr)
+    }
+
+    const refetchParentRegion = async () =>{
+        const {data} = await refetch();
+        parentRegion = data.getRegionById;
+        console.log("refetched parent",parentRegion);
+    }
+
+    const handleAddLandmark = async () =>{
+        console.log(landmarkName);
+        if(landmarkName !== ""){
+            await props.addDeleteEditLandmark(region._id, landmarkName, 1, "");// opcodes: 0 - delete, 1 - add
+            await refetchSSRegion();
+            setLandmarkName("");
+        }
+    }
+
+    const handleChangeParent = async (e) => {
+        const value = e.target.value;
+        console.log("handleChangeParent, parentID:", value);
+        if(value === region.parentRegion || null){
+            console.log("no change detected!");
+        }else{
+            await props.changeParentRegion(region._id, value, region.parentRegion);
+            props.setActiveRegionId(value);
+            await refetchSSRegion();
+            await refetchRegionsAbove();
+            await refetchLandmarks();
+            await refetchParentRegion();
+        }
+
+        toggleChangeParent(!changeParent)
+    }
+
+    
+
+    let undoButtonStyle = props.undoSize() === 0 ? 'SS-header-button-disabled ' : 'SS-header-section SS-header-button ';
+    let redoButtonStyle = props.redoSize() === 0 ? 'SS-header-button-disabled ' : 'SS-header-section SS-header-button ';
+    
+    const clickDisabled = (str) => {
+        if(str === "undo"){
+            undoButtonStyle = 'SS-header-button-disabled';
+        }else if( str === "redo") {
+            redoButtonStyle = 'SS-header-button-disabled';
+        }
+    };
+    const hoverUndo = props.undoSize() === 0 ? 'transparent' : 'lighten';
+    const hoverRedo = props.redoSize() === 0 ? 'transparent' : 'lighten';
+    const handleUndo = async () =>{
+        if (props.undoSize() === 0){
+            console.log("undo clicked disabled")
+            clickDisabled("undo");
+        }else{
+            // console.log("undo clicked")
+            await props.undo();
+            await refetchSSRegion();
+            await refetchRegionsAbove();
+            await refetchLandmarks();
+            await refetchParentRegion();
+        }  
+    }
+
+    const handleRedo = async () =>{
+        if (props.redoSize() === 0){
+            console.log("redo clicked disabled")
+            clickDisabled("redo");
+        }else{
+            // console.log("redo clicked")
+            await props.redo();
+            await refetchSSRegion();
+            await refetchRegionsAbove();
+            await refetchLandmarks();
+            await refetchParentRegion();
+        }  
+    }
+
+    // console.log(region);
+
     return (
         <div className="rv_Maincontainer">
             <div className="rv_LeftBox">
                 <div className="rv_backForwardButtonsBox">
-                    <div className="rv_backForwardButtons"><i className="material-icons">undo</i></div>
-                    <div className="rv_backForwardButtons"><i className="material-icons">redo</i></div>
+                    {/* <div className="rv_backForwardButtons"><i className="material-icons">undo</i></div>
+                    <div className="rv_backForwardButtons"><i className="material-icons">redo</i></div> */}
+                    <WButton wType="texted" className={`${undoButtonStyle}`} onClick={handleUndo}  hoverAnimation={`${hoverUndo}`} >
+                        <i className="material-icons">undo</i>
+                    </WButton>
+                    <WButton wType="texted" className={`${redoButtonStyle}`} onClick={handleRedo} hoverAnimation={`${hoverRedo}`} >
+                        <i className="material-icons">redo</i>
+                    </WButton>
                 </div>
                 <img className="rv_Img" src={Globe} alt="Globe" />
                 <div className="rv_TextContainer">
                     <div className="rv_Text">Region Name: {name}</div>
                     <div className="rv_ParentTextBox">
                         <div className="rv_Text">Parent Region: 
-                            <span className="rv_ParentName_Text" onClick={()=>props.setSSRegionId(null)}>{parentName}</span>
+                            {changeParent ?
+                                <select
+                                    className='rv_parent_select' onBlur={handleChangeParent}
+                                    autoFocus={true} 
+                                >
+                                    {
+                                        Object.keys(parentRegionCandidates).map((key)=>{
+                                            if(key === parentName){
+                                                console.log(key, parentName);
+                                                return (
+                                                    <option value={parentRegionCandidates[key]} selected>{key}</option>
+                                                )
+                                            }else{
+                                                return(
+                                                    <option value={parentRegionCandidates[key]}>{key}</option>
+                                                )
+                                            }
+                                        })
+                                    }
+                                </select>
+                            :
+                            <span className="rv_ParentName_Text" onClick={()=>{props.setSSRegionId(null); props.setActiveRegionId(region.parentRegion)}}>{parentName}</span>
+                            }
                         </div>
-                        <div className="rv_editButton"><i className="material-icons">edit</i></div>
+                        <div className="rv_editButton" onClick={()=>{toggleChangeParent(!changeParent)} }><i className="material-icons">edit</i></div>
                     </div>
                     <div className="rv_Text">Region Capital: {capital}</div>
                     <div className="rv_Text">Region Leader: {leader}</div>
@@ -71,11 +224,26 @@ const RegionViewer = (props) => {
                 <div className="rv_landmarksContainer">
                     <div className="rv_landmarks_textbox">Region Landmarks:</div>
                     <div className="landmarksBox">
-                        {/* map to generate all landmarks */}
+                        {/* map to generate all landmarks */
+                            landmarksArr ?
+                            landmarksArr.map(landmark => (
+                                <LandmarkEntry
+                                    landmark={landmark} 
+                                    thisRegionslandmarks={thisRegionslandmarks}
+                                    landmarksArr={landmarksArr}
+
+                                    addDeleteEditLandmark={props.addDeleteEditLandmark}
+                                    refetchSSRegion= {refetchSSRegion}
+                                    regionId={region? region.parentRegion: null}
+                                />
+                            ))
+                            :
+                            <></>
+                        }
                     </div>
                     <div className="rv_addNewLandmarksBar">
-                        <div className="rv_addNewLandmarksBar_btn"><i className="material-icons">add</i></div>
-                        <input className="rv_addNewLandmarksBar_input"></input>
+                        <div className="rv_addNewLandmarksBar_btn" onClick={()=>{handleAddLandmark()}}><i className="material-icons">add</i></div>
+                        <input className="rv_addNewLandmarksBar_input" name="landmark" value={landmarkName} onChange={event => setLandmarkName(event.target.value)}></input>
                     </div>
                 </div>
             </div>

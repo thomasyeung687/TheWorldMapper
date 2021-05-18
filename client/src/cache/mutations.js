@@ -159,6 +159,19 @@ export const UPDATE_SUBREGIONS_ARRAY = gql`
 	}
 `;
 
+export const UPDATE_REGION_LANDMARKS = gql`
+	mutation UpdateRegionLandmarks($_id: String!, $landmark: String!, $opcode: String!, $newLandmark: String!) {
+		updateRegionLandmarks(_id: $_id, landmark: $landmark, opcode: $opcode, newLandmark: $newLandmark)
+	}
+`;
+
+export const UPDATE_REGION_PARENT = gql`
+	mutation UpdateRegionParent($_id: String!, $parentId: String!) {
+		updateRegionParent(_id: $_id, parentId: $parentId)
+	}
+`;
+
+
 // export const UPDATE_REGION_FIELD = gql`
 // 	mutation UpdateRegionField($_id: String!, $value: String!) {
 // 		updateRegionField(_id: $_id, value: $value)

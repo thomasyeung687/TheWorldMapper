@@ -75,6 +75,54 @@ module.exports = {
 			}
 			console.log(subregionArr);
 			return subregionArr;
+		},
+		getAllRegionAbove: async (_, args) =>{
+			const {_id } = args;
+			console.log("getting regions above")
+			let regionsAbove = [];
+			let id = new ObjectId(_id);
+			let region = await Region.findOne({_id: id})
+			let parentId = new ObjectId(region.parentRegion);
+			let parentRegion = await Region.findOne({_id: parentId})
+
+			while(parentRegion.parentRegion != null){
+				let p_id = new ObjectId(parentRegion.parentRegion);
+				let fetchedRegion = await Region.findOne({_id: p_id});
+				let parentSubregions = fetchedRegion.subregions;
+				console.log(parentSubregions)
+				for( const id of parentSubregions){
+					const objectID = new ObjectId(id)
+					const region = await Region.findOne({_id: objectID});
+					regionsAbove.push(region);
+				}
+				let parentIdL = new ObjectId(parentRegion.parentRegion);
+				parentRegion = await Region.findOne({_id: parentIdL})
+			}
+			console.log("getting regions above", regionsAbove)
+			return regionsAbove;
+		},
+		getAllLandmarks: async(_, args) => {
+			const {_id} = args;
+			const thisregionId = new ObjectId(_id);
+			const thisregion = await Region.findOne({_id: thisregionId});
+			let landmarks = thisregion.landmarks;
+			let allLandmarks = []
+			allLandmarks = allLandmarks.concat(landmarks);
+			console.log(allLandmarks);
+			let nodes = [];
+			nodes = nodes.concat(thisregion.subregions);
+			while(nodes.length !== 0){
+				const OID = new ObjectId(nodes.pop());
+				const regionNode = await Region.findOne({_id: OID});
+				if(regionNode){
+					for(let i = 0; i < regionNode.landmarks.length; i++){
+						allLandmarks.push(regionNode.landmarks[i]+"-"+regionNode.name);
+					}
+					nodes = nodes.concat(regionNode.subregions);
+				}
+			}
+			console.log("done")
+			return allLandmarks;
 		}
 	},
 	Mutation: {
@@ -214,6 +262,82 @@ module.exports = {
 			}else{
 				return null;
 			}
+		},
+		updateRegionLandmarks: async (_, args) => {
+			const {_id, landmark, opcode, newLandmark} = args;
+			const objectID = new ObjectId(_id);
+			const region = await Region.findOne({_id: objectID});
+			let landmarks = region.landmarks;
+			console.log("updateRegionLandmarks",landmarks);
+			// opcodes: 0 - delete, 1 - add , 2 - edit
+			if(opcode === "1"){//add landmark
+				console.log("adding updateRegionLandmarks", _id, landmark, opcode);
+				landmarks.push(landmark);
+				console.log("lmArr",landmarks);
+				let updated = await Region.updateOne({_id: objectID}, {landmarks: landmarks});
+				if(updated){
+					console.log("successfully added")
+					return true;
+				}else{
+					console.log("unsuccessfully added")
+					return false;
+				}
+			}else if(opcode === "0"){ //delete landmark
+				console.log("deleting updateRegionLandmarks", _id, landmark, opcode);
+				landmarks = landmarks.filter(lm => lm !== landmark);
+				console.log("lmArr",landmarks);
+
+				let updated = await Region.updateOne({_id: objectID}, {landmarks: landmarks});
+				if(updated){
+					console.log("successfully deleted")
+					return true;
+				}else{
+					console.log("unsuccessfully deleted")
+					return false;
+				}
+			}else{//edit landmark.
+				console.log("editing updateRegionLandmarks", _id, landmark, opcode, newLandmark);
+				for( let i = 0 ; i < landmarks.length; i++){
+					if(landmarks[i] === landmark){
+						landmarks[i] = newLandmark;
+					}
+				}
+				console.log(landmarks);
+
+				let updated = await Region.updateOne({_id: objectID}, {landmarks: landmarks});
+				if(updated){
+					console.log("successfully edited")
+					return true;
+				}else{
+					console.log("unsuccessfully edited")
+					return false;
+				}
+			}
+		},
+		updateRegionParent: async (_, args)=>{
+			const {_id, parentId} = args;
+			const id = new ObjectId(_id);
+			const newParentId = new ObjectId(parentId);
+
+			const region 			= await Region.findOne({_id: id});
+			const ParentId 			= new ObjectId(region.parentRegion);
+
+			const parentRegion 		= await Region.findOne({_id: ParentId});
+			const newParentRegion  	= await Region.findOne({_id: newParentId});
+			
+			const parentRegionSubregions = parentRegion.subregions.filter((id)=> id !== _id); //removing region from oldParentSubregions
+			const newParentRegionSubregions = newParentRegion.subregions.concat([region._id]);//adding to the subregions of the new parent.
+
+			console.log(newParentRegionSubregions, parentRegionSubregions);
+			
+			const updateRegion = await Region.updateOne({_id: id}, {parentRegion: newParentId})
+			const updateoldParentRegion = await Region.updateOne({_id: ParentId}, {subregions: parentRegionSubregions})
+			const updateNewParentRegon = await Region.updateOne({_id: newParentId}, {subregions: newParentRegionSubregions})
+
+			if(updateRegion && updateoldParentRegion && updateNewParentRegon){
+				return true;
+			}
+			return false;
 		}
 
 	}
