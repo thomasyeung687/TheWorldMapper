@@ -18,7 +18,7 @@ const SidebarEntry = (props) => {
 	}
 
     const handleEditing = (e) => {
-        e.stopPropagation();
+        //e.stopPropagation();
         setPreEdit(props.name);
         toggleEditing(!editing);
     };
@@ -50,7 +50,7 @@ const SidebarEntry = (props) => {
 
     // console.log("me",props._id)
     // const entryStyle = props.id === props.activeid ? 'list-item list-item-active' : 'list-item ';
-    const entryStyle = 'mapEntryContainer ';
+    // const entryStyle = 'mapEntryContainer ';
 
     //here we are getting the region information from mongodb
     const { error, loading, data, refetch } = useQuery(queries.GET_DB_REGION_BY_ID, {variables: {_id: props._id}});
@@ -99,8 +99,8 @@ const SidebarEntry = (props) => {
 
     return (
         <>
-        <WNavItem 
-            className={entryStyle} 
+        <div 
+            className='mapEntryContainer'
             hoverAnimation="lighten"
         >
             {
@@ -120,7 +120,7 @@ const SidebarEntry = (props) => {
                     </div>
                     </>
             }
-        </WNavItem>
+        </div>
 
         {
 			showDeleteMap && (<Delete  

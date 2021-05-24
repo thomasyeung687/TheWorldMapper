@@ -84,11 +84,6 @@
 }
 
 //mapEntry Styling
-.mapEntryContainer {
-  cursor: pointer;
-  width: 100%;
-  height: Clamp(50px, 15%, 60px);
-}
 
 .mapEntryText {
   font-size: 2vw;
@@ -116,4 +111,14 @@
 .mapEntryTrashImg {
   height: 2vw;
   width: 2vw;
+}
+
+.mapEntryContainer {
+  cursor: pointer;
+  width: 100%;
+  height: Clamp(50px, 15%, 60px);
+}
+
+.mapEntryContainer:hover {
+  background-color: #e5e5e5;
 }

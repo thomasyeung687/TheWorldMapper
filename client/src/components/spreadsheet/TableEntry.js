@@ -201,15 +201,15 @@ const TableEntry = (props) => {
                 </div> */}
                 {
                     editingName ? <WInput
-                            className='table-input' onBlur={() => handleNameEditOnBlur()}
-                            onKeyDown={() => handleNameEditonkeyDown()}
+                            className='table-input' onBlur={handleNameEditOnBlur}
+                            onKeyDown={handleNameEditonkeyDown}
                             autoFocus={true} defaultValue={name} type='text'
                             wType="outlined" barAnimation="solid" inputClass="table-input-class"
                         />
                         : 
                         <div className="SStableTextWrapper" 
-                        onDoubleClick={() => handleDoubleClick() } 
-                        onClick={() => handleClick() }>
+                        onDoubleClick={handleDoubleClick} 
+                        onClick={handleClick}>
                             <div className="SStableText"
                                 // onClick={() => toggleNameEdit(!editingName)}
                                 
@@ -223,13 +223,13 @@ const TableEntry = (props) => {
             <WCol size="2">
                 {
                     editingCapital ? <WInput
-                        className='table-input' onBlur={() => handleCapitalEditOnBlur()}
-                        onKeyDown={() => handleCapitalEditonkeyDown()}
+                        className='table-input' onBlur={handleCapitalEditOnBlur}
+                        onKeyDown={handleCapitalEditonkeyDown}
                         autoFocus={true} defaultValue={capital} type='text'
                         wType="outlined" barAnimation="solid" inputClass="table-input-class"
                     />
                         : <div className="SStableText"
-                            onClick={() => toggleCapitalEditfunc()}
+                            onClick={toggleCapitalEditfunc}
                         >{capital}
                         </div>
                 }
@@ -239,7 +239,7 @@ const TableEntry = (props) => {
                 {
                     editingLeader ? <WInput
                     className='table-input' onBlur={handleLeaderEditOnBlur}
-                    onKeyDown={() =>handleLeaderEditonkeyDown()}
+                    onKeyDown={handleLeaderEditonkeyDown}
                     autoFocus={true} defaultValue={leader} type='text'
                     wType="outlined" barAnimation="solid" inputClass="table-input-class"
                     />
