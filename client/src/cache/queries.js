@@ -79,21 +79,12 @@ export const GET_ALL_LANDMARKS = gql`
 	}
 `;
 
-// export const GET_DB_TODOS = gql`
-// 	query GetDBTodos {
-// 		getAllTodos {
-// 			_id
-// 			id
-// 			name
-// 			owner
-// 			items {
-// 				_id
-// 				id
-// 				description
-// 				due_date
-// 				assigned_to
-// 				completed
-// 			}
-// 		}
-// 	}
-// `;
+
+export const GET_ANCESTOR_REGIONS = gql`
+	query GetAncestorRegions($_id: String!) {
+		getAncestorRegions(_id: $_id){
+			_id
+			name
+		}
+	}
+`;

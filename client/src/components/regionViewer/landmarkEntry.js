@@ -15,6 +15,7 @@ const LandmarkEntry = (props) => {
             console.log("handleLandmarkEdit",value);
             await props.addDeleteEditLandmark(props.regionId, props.landmark, 2, value);// opcodes: 0 - delete, 1 - add, 2-edit
             await props.refetchSSRegion();
+            await props.refetchLandmarks();
         }else{
             console.log("no change detected");
         }
@@ -24,6 +25,7 @@ const LandmarkEntry = (props) => {
         console.log("delte Clicked", props.regionId)
         await props.addDeleteEditLandmark(props.regionId, props.landmark, 0, "");// opcodes: 0 - delete, 1 - add, 2-edit
         await props.refetchSSRegion();
+        await props.refetchLandmarks();
     }
     return(
         <>

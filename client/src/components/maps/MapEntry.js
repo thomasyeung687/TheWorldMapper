@@ -55,7 +55,7 @@ const SidebarEntry = (props) => {
     //here we are getting the region information from mongodb
     const { error, loading, data, refetch } = useQuery(queries.GET_DB_REGION_BY_ID, {variables: {_id: props._id}});
 
-    const setActiveHelperFunction = async() => {
+    const setActiveHelperFunction = async () => {
 		// tps.clearAllTransactions();
 		//get all subregions using subregions array in map
 		console.log("setActiveHelperFunction",props._id);
@@ -78,7 +78,7 @@ const SidebarEntry = (props) => {
 		// console.log(regionObj);
         // console.log(regionObj["subregions"]);
 
-        props.handleSetActiveMap(props._id);
+        await props.handleSetActiveMap(props._id);
         //here I want to get the subregions from the db. How do I call the query but with each subregions id?
         // let newSubRegions = [];
         // regionObj["subregions"].map((_id)=>{
@@ -108,8 +108,8 @@ const SidebarEntry = (props) => {
                     :   
                     <>
                     <div className="MapEntryContentWrapper">
-                        <div className="MapEntryClickable" onDoubleClick={ handleDoubleClick } 
-                            onClick={ handleClick } >
+                        <div className="MapEntryClickable" onDoubleClick={ () => {handleDoubleClick()} } 
+                            onClick={() =>  {handleClick()} } >
                             <div className='list-text'>
                                 {props.name}
                             </div>

@@ -29,6 +29,8 @@ const typeDefs = gql `
 
 		getAllRegionAbove(_id: String!): [Region]
 		getAllLandmarks(_id: String!): [String]
+
+		getAncestorRegions(_id: String!): [AncestorRegion]
 	}
 	extend type Mutation {
 		addMap(map: RegionInput!): String
@@ -55,22 +57,9 @@ const typeDefs = gql `
 		landmarks: [String]
 	}
 
-
-
-
-
-
-	type Map {
+	type AncestorRegion {
 		_id: String!
 		name: String!
-		owner: String!
-		subregions: [String],
-	}
-	input MapInput {
-		_id: String
-		name: String
-		owner: String
-		subregions: [String],
 	}
 `;
 

@@ -33,12 +33,6 @@
   cursor: pointer;
 }
 
-.rv_Img {
-  height: 50%;
-  width: auto;
-  margin: 50px;
-}
-
 .rv_TextContainer {
   padding-top: 20px;
   width: 100%;
@@ -209,4 +203,22 @@
   width: 50%;
   height: 35px;
   font-size: 20px;
+}
+
+.flagInRVWrapper {
+  width: 50%;
+  height: auto;
+  // background-color: white;
+}
+
+.flagInRV {
+  background-color: black;
+}
+
+.globeWrapper {
+}
+
+.globe {
+  width: 100%;
+  height: auto;
 }

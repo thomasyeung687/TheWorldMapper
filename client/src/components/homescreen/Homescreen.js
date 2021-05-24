@@ -8,6 +8,8 @@ import Home 			from './Home';
 import { WNavbar, WSidebar, WNavItem } 	from 'wt-frontend';
 import { WLayout, WLHeader, WLMain, WLSide } from 'wt-frontend';
 import NavbarOptions 					from '../navbar/NavbarOptions';
+import ActiveRegionNav 					from '../navbar/activeRegionNav';
+import AncestorRegionNav 				from '../navbar/ancestorRegions';
 import Logo 							from '../navbar/Logo';
 import { BrowserRouter, Switch, Route, Redirect, useHistory } from 'react-router-dom';
 
@@ -25,6 +27,7 @@ import { UpdateRegionField_Transaction,
 	ChangeParentRegion_Transaction, 
 	UpdateRegionLandmarks_Transaction, SortRegion_Transaction} 				from '../../utils/jsTPS';
 import { isNetworkRequestInFlight } from '@apollo/client/core/networkStatus';
+import WButton from 'wt-frontend/build/components/wbutton/WButton';
 
  
 const Homescreen = (props) => {
@@ -68,6 +71,8 @@ const Homescreen = (props) => {
 	let maps = [];
 	const [activeRegionId, setActiveRegionId] 		= useState(null);
 	const [activeSSRegionId, setSSRegionId] 		= useState(null);
+	const [subregionsArr, setSubregionsArr]   		= useState(null);
+	const [activeAncestorRegions, setactiveAncestorRegions] = useState(null);
 	const [numUndo, setNumUndo] 					= useState(0);
 	const [numRedo, setNumRedo] 					= useState(0);
 
@@ -79,6 +84,7 @@ const Homescreen = (props) => {
 	const [UpdateSubRegionsArray] 	= useMutation(mutations.UPDATE_SUBREGIONS_ARRAY);
 	const [UpdateRegionLandmarks]	= useMutation(mutations.UPDATE_REGION_LANDMARKS);
 	const [UpdateRegionParent] 		= useMutation(mutations.UPDATE_REGION_PARENT);
+
 
 	//for navbar
 	const { loading, error, data, refetch:refetchMaps } = useQuery(queries.GET_DB_MAPS);
@@ -104,6 +110,15 @@ const Homescreen = (props) => {
 		}
 	}
 
+	const { loading:loadingAR, error:errorAR, data:dataAR, refetch:refetchAR } = useQuery(queries.GET_ANCESTOR_REGIONS, {skip: !activeRegionId, variables: {_id: activeRegionId}, fetchPolicy:"no-cache"});
+
+	const refetchAncestorRegions = async (id) =>{
+		const {data} = await refetchAR({variables: {_id: id}} );//activeRegionId gets passed in.
+		console.log("refetched Ancestor Regions: ", data.getAncestorRegions, id);
+		setactiveAncestorRegions(data.getAncestorRegions);
+	}
+
+
 	const deleteMap = async (_id) => {
 		DeleteMap({ variables: { _id: _id }, refetchQueries: [{ query: queries.GET_DB_MAPS }] });
 		refetchMaps();
@@ -114,12 +129,6 @@ const Homescreen = (props) => {
         UpdateMapName({ variables: { _id: _id, value: value }, refetchQueries: [{ query: queries.GET_DB_MAPS }] });
         refetchMaps();
     }
-
-
-	
-
-	// const [UpdateRegionField] 	= useMutation(mutations.UPDATE_REGION_FIELD);
-	// const [UpdateRegionsArray]		= useMutation(mutations.UPDATE_REGIONS_ARRAY);
 
 	const tpsUndo = async () => {
 		console.log("undoing");
@@ -149,30 +158,6 @@ const Homescreen = (props) => {
 		props.tps.clearAllTransactions();
 	}
 
-
-
-	// const createNewRegion = async () => {
-    //     console.log("createNewRegion")
-    //     let newRegion = {
-	// 		_id: "",
-	// 		owner: props.user._id,
-	// 		name: "New Region",
-	// 		capital:"Capital",
-	// 		leader: "Leader",
-	// 		parentRegion: props.activeRegion._id,
-	// 		subregions: [],
-	// 		landmarks:[]
-	// 	}
-	// 	//const { data } = await AddMap({ variables: { map: newMap }, refetchQueries: [{ query: GET_DB_TODOS }] });
-	// 	const { data } = await AddRegion({ variables: { region: newRegion }});
-    //     let { addRegion } = data;
-    //     console.log(addRegion);
-    //     // let region = props.activeRegion
-    //     // region
-
-    //     props.setActiveRegion(addRegion)
-    // }
-
 	const addRegion = async () => {
 		console.log("createNewRegion")
 		let newRegion = {
@@ -190,10 +175,6 @@ const Homescreen = (props) => {
 			newRegion._id, newRegion, 1, AddRegion, DeleteRegion) 
 		props.tps.addTransaction(transaction);
 		await tpsRedo();
-		// console.log(props.tps.getUndoSize(), props.tps.getRedoSize());
-		// setActiveRegionId(activeRegionId)
-		// await refetchMaps();
-        // maps = data.getAllMaps;
 	};
 
 	const deleteRegion = async (region, index) => { 
@@ -306,45 +287,7 @@ const Homescreen = (props) => {
 		await tpsRedo();
 	}
 
-	// const handleSetActiveMap = async (id) => {
-	// 	const map = maps.find(map => map._id === id);
-	// 	// tps.clearAllTransactions();
-	// 	//get all subregions using subregions array in map
-	// 	console.log("handleSetActiveMap",map._id);
-	// 	let temp = await getRegionById({ variables: { _id: map._id } })
-	// 	// console.log(rbiData);
-	// 	// console.log("handleSetActiveMap",id)
-	// 	// console.log(map);
-	// 	let regionObj = null;
-	// 	// if(rbiData) { 
-	// 	// 	let { getRegionById } = rbiData;
-	// 	// 	if(getRegionById !== null) { regionObj = getRegionById; }
-	// 	// }
-	// 	regionObj = rbiData;
-		
-	// 	console.log(temp)
-	// 	console.log(rbiData);
-
-	// 	setActiveRegion(regionObj);
-	// };
-
-	// let history = useHistory();
-
-	// if(auth === false){
-	// 	history.push("/home")
-	// }else{
-	// 	if(activeRegion === null){
-	// 		history.push("/maps")
-	// 	}else{
-	// 		if(activeSSRegion === null){
-	// 			history.push("/spreadsheet")
-	// 		}else{
-	// 			history.push("/regionViewer")
-	// 		}
-	// 	}
-	// }
-
-	const handleSetActiveMap = (id) =>{
+	const handleSetActiveMap = async (id) =>{
 		console.log("handleSetActiveMap", id);
 		
 		let recentMap = maps.filter((map)=>{return map._id === id});
@@ -354,18 +297,28 @@ const Homescreen = (props) => {
 		console.log(newMap);
 		maps = newMap;
 		setActiveRegionId(recentMap[0]._id);
+		await refetchAncestorRegions(id);
 		clearAllTransactions()
 	}
-	const handleSetActiveRegion = (id) =>{
+	const handleSetActiveRegion = async (id) =>{
 		// console.log("handleSetActiveRegion", id);
 
 		setActiveRegionId(id);
+		await refetchAncestorRegions(id);
 		clearAllTransactions()
 	}
 	const handleSetActiveSSRegion = (id) =>{
 		// console.log("handleSetActiveSSRegion", id);
 
 		setSSRegionId(id);
+		clearAllTransactions()
+	}
+	const handleSetActiveAncestorRegion = async (id, ind) =>{
+		console.log("handleSetActiveAncestorRegion", id)
+		setActiveRegionId(id)
+		setactiveAncestorRegions(activeAncestorRegions.splice(ind))
+		setSSRegionId(null);
+		setSubregionsArr(null);
 		clearAllTransactions()
 	}
 
@@ -383,9 +336,39 @@ const Homescreen = (props) => {
 							setActiveRegionId= {setActiveRegionId}//to go back to maps by setting active region to []
 							setSSRegionId={setSSRegionId}
 							clearAllTransactions={clearAllTransactions}
+							setactiveAncestorRegions={setactiveAncestorRegions}
 							/>
 						</WNavItem>
 					</ul>
+					{
+            			activeAncestorRegions ?
+						<ul>
+							<AncestorRegionNav
+							setActiveRegionId = {setActiveRegionId}
+								activeRegionId = {activeRegionId}
+								setSSRegionId = {setSSRegionId}
+								activeSSRegionId = {activeSSRegionId}
+								subregionsArr = {subregionsArr}
+
+								activeAncestorRegions = {activeAncestorRegions}
+								handleSetActiveAncestorRegion={handleSetActiveAncestorRegion}
+							/>
+						</ul>
+						:
+						<></>
+					}
+					{
+            			activeSSRegionId && subregionsArr ?
+						<ul>
+							<ActiveRegionNav
+								activeSSRegionId = { activeSSRegionId}
+								setSSRegionId = {setSSRegionId}
+								subregionsArr = {subregionsArr}
+							/>
+						</ul>
+						:
+						<></>
+					}
 					<ul>
 						<NavbarOptions
 							fetchUser={props.fetchUser} auth={auth} 
@@ -394,6 +377,8 @@ const Homescreen = (props) => {
 							user={props.user}
 							setShowUpdateProp={setShowUpdate}
 							// refetchTodos={refetch}
+
+							subregionsArr={subregionsArr}
 						/>
 					</ul>
 				</WNavbar>
@@ -421,6 +406,7 @@ const Homescreen = (props) => {
 						deleteMap={deleteMap} editMapName={editMapName}
 						setActiveRegionId={setActiveRegionId}
 						handleSetActiveMap={handleSetActiveMap}
+						
 						/>
 					} 
 				/>
@@ -453,7 +439,7 @@ const Homescreen = (props) => {
 						activeRegionId={activeRegionId}
 						setActiveRegionId={setActiveRegionId}
 						activeSSRegionId={activeSSRegionId} setSSRegionId={handleSetActiveSSRegion}
-						
+						setSubregionsArr={setSubregionsArr}
 
 						addDeleteEditLandmark={addDeleteEditLandmark}
 						changeParentRegion={changeParentRegion}

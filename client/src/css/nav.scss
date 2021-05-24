@@ -1,0 +1,36 @@
+.ancestorBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: fit-content;
+  width: 20%;
+  margin-left: 5px;
+  margin-right: 5px;
+  text-align: center;
+  height: 35px;
+  overflow: hidden;
+}
+
+.currAncestorRegionBtn {
+  cursor: default;
+  color: rgb(126, 126, 126);
+}
+
+.notCurrAncestorRegionBtn {
+  cursor: pointer;
+  color: white;
+}
+
+.notCurrAncestorRegionBtn:hover {
+  background-color: silver;
+}
+
+.ancestorNavigation {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  width: Clamp(400px, 40%, 600px);
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: black;
+}

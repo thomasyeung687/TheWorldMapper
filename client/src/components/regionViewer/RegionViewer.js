@@ -35,7 +35,19 @@ const RegionViewer = (props) => {
     if(data) { 
         console.log(data);
         let { getRegionById } = data;
-        if(getRegionById !== null) { parentRegion = getRegionById; }
+        if(getRegionById !== null) { 
+            parentRegion = getRegionById; 
+            console.log(parentRegion.subregions);}
+    }
+    const { error:errorSubregionsArr, loading:loadingSubregionsArr, data:dataSubregionsArr, refetch:refetchSubregionsArr } = useQuery(queries.GET_ALL_CHILDREN_REGIONS, {skip: !parentRegion, variables: {subregionIds: parentRegion ? parentRegion.subregions : null}});
+    
+    if(dataSubregionsArr) { 
+        console.log(dataSubregionsArr.getAllChildren);
+        let { getAllChildren } = dataSubregionsArr;
+        if(getAllChildren !== null) { 
+            props.setSubregionsArr(getAllChildren); 
+            console.log("fetched dataSubregionsArr", getAllChildren);
+        }
     }
     
     
@@ -76,6 +88,7 @@ const RegionViewer = (props) => {
         const {data} = await refetch2();
         region = data.getRegionById;
         console.log("refetched SSRegion",region);
+        await refetchLandmarks();
     }
 
     const refetchRegionsAbove = async () => {
@@ -101,11 +114,18 @@ const RegionViewer = (props) => {
         console.log("refetched parent",parentRegion);
     }
 
+    const refetchSubregionsArrfunc = async () => {
+        const {data} = await refetchSubregionsArr();
+        props.setSubregionsArr(data.getAllChildren);
+        console.log("refetched refetchSubregionsArr",data.getAllChildren);
+    }
+
     const handleAddLandmark = async () =>{
         console.log(landmarkName);
         if(landmarkName !== ""){
             await props.addDeleteEditLandmark(region._id, landmarkName, 1, "");// opcodes: 0 - delete, 1 - add
             await refetchSSRegion();
+            await refetchLandmarks();
             setLandmarkName("");
         }
     }
@@ -122,6 +142,7 @@ const RegionViewer = (props) => {
             await refetchRegionsAbove();
             await refetchLandmarks();
             await refetchParentRegion();
+            await refetchSubregionsArrfunc();
         }
 
         toggleChangeParent(!changeParent)
@@ -152,6 +173,7 @@ const RegionViewer = (props) => {
             await refetchRegionsAbove();
             await refetchLandmarks();
             await refetchParentRegion();
+            await refetchSubregionsArrfunc();
         }  
     }
 
@@ -166,10 +188,28 @@ const RegionViewer = (props) => {
             await refetchRegionsAbove();
             await refetchLandmarks();
             await refetchParentRegion();
+            await refetchSubregionsArrfunc();
         }  
     }
 
     // console.log(region);
+    console.log(landmarksArr);
+
+    const showFlag = () =>{
+        try {
+            return(
+                <div className="flagInRVWrapper">
+                    <img src={require("../../../public/flags/" + name + " Flag.png")} className="flagInRV"></img>
+                </div>
+            )
+        } catch (error) {
+            return(
+                <div className="flagInRVWrapper">
+                    <img className="globe" src={Globe} alt="Globe" />
+                </div>
+            )
+        }
+    }
 
     return (
         <div className="rv_Maincontainer">
@@ -184,7 +224,7 @@ const RegionViewer = (props) => {
                         <i className="material-icons">redo</i>
                     </WButton>
                 </div>
-                <img className="rv_Img" src={Globe} alt="Globe" />
+                {showFlag()}
                 <div className="rv_TextContainer">
                     <div className="rv_Text">Region Name: {name}</div>
                     <div className="rv_ParentTextBox">
@@ -234,7 +274,8 @@ const RegionViewer = (props) => {
 
                                     addDeleteEditLandmark={props.addDeleteEditLandmark}
                                     refetchSSRegion= {refetchSSRegion}
-                                    regionId={region? region.parentRegion: null}
+                                    refetchLandmarks={refetchLandmarks}
+                                    regionId={region? region._id: null}
                                 />
                             ))
                             :

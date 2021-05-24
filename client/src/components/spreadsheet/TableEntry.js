@@ -156,12 +156,12 @@ const TableEntry = (props) => {
     let delay = 300;
     let prevent = false;
 
-    const handleClick = (e) => {
+    const handleClick = async (e) => {
       let me = this;
-      timer = setTimeout(function() {
+      timer = setTimeout( async function() {
         if (!prevent) {
             console.log("asdas");
-            props.setActiveRegionId(region._id);
+            await props.setActiveRegionId(region._id);
         }
         prevent = false;
       }, delay);
@@ -170,6 +170,22 @@ const TableEntry = (props) => {
       clearTimeout(timer);
       prevent = true;
       toggleNameEditfunc();
+    }
+
+    const showFlag = () =>{
+        try {
+            return(
+                <div className="flagInEntryWrapper">
+                    <img src={require("../../../public/flags/" + name + " Flag.png")} className="flagInEntry"></img>
+                </div>
+            )
+        } catch (error) {
+            return(
+                <div className="SStableText">
+                    FLAG
+                </div>
+            )
+        }
     }
 
 
@@ -185,16 +201,20 @@ const TableEntry = (props) => {
                 </div> */}
                 {
                     editingName ? <WInput
-                            className='table-input' onBlur={handleNameEditOnBlur}
-                            onKeyDown={handleNameEditonkeyDown}
+                            className='table-input' onBlur={() => handleNameEditOnBlur()}
+                            onKeyDown={() => handleNameEditonkeyDown()}
                             autoFocus={true} defaultValue={name} type='text'
                             wType="outlined" barAnimation="solid" inputClass="table-input-class"
                         />
-                        : <div className="SStableText"
-                            // onClick={() => toggleNameEdit(!editingName)}
-                            onDoubleClick={ handleDoubleClick } 
-                            onClick={ handleClick }
-                        >{name}
+                        : 
+                        <div className="SStableTextWrapper" 
+                        onDoubleClick={() => handleDoubleClick() } 
+                        onClick={() => handleClick() }>
+                            <div className="SStableText"
+                                // onClick={() => toggleNameEdit(!editingName)}
+                                
+                            >{name}
+                            </div>
                         </div>
                 }
                 </div>
@@ -203,13 +223,13 @@ const TableEntry = (props) => {
             <WCol size="2">
                 {
                     editingCapital ? <WInput
-                        className='table-input' onBlur={handleCapitalEditOnBlur}
-                        onKeyDown={handleCapitalEditonkeyDown}
+                        className='table-input' onBlur={() => handleCapitalEditOnBlur()}
+                        onKeyDown={() => handleCapitalEditonkeyDown()}
                         autoFocus={true} defaultValue={capital} type='text'
                         wType="outlined" barAnimation="solid" inputClass="table-input-class"
                     />
                         : <div className="SStableText"
-                            onClick={toggleCapitalEditfunc}
+                            onClick={() => toggleCapitalEditfunc()}
                         >{capital}
                         </div>
                 }
@@ -219,7 +239,7 @@ const TableEntry = (props) => {
                 {
                     editingLeader ? <WInput
                     className='table-input' onBlur={handleLeaderEditOnBlur}
-                    onKeyDown={handleLeaderEditonkeyDown}
+                    onKeyDown={() =>handleLeaderEditonkeyDown()}
                     autoFocus={true} defaultValue={leader} type='text'
                     wType="outlined" barAnimation="solid" inputClass="table-input-class"
                     />
@@ -230,9 +250,7 @@ const TableEntry = (props) => {
             </WCol>
 
             <WCol size="2">
-                <div className="SStableText"
-                >FLAG
-                </div>
+                    {showFlag()}
             </WCol>
 
             <WCol size="4">

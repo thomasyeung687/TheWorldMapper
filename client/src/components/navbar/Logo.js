@@ -6,6 +6,7 @@ const Logo = (props) => {
         props.setActiveRegionId(null); 
         props.setSSRegionId(null); 
         props.clearAllTransactions(); 
+        props.setactiveAncestorRegions(null);
     }
     return (
         <div className='logo' onClick={()=>{onclickFunc()}} >

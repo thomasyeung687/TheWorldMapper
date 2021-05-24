@@ -123,6 +123,28 @@ module.exports = {
 			}
 			console.log("done")
 			return allLandmarks;
+		},
+		getAncestorRegions: async(_, args) => {
+			const {_id} = args;
+			const thisregionId = new ObjectId(_id);
+			const thisregion = await Region.findOne({_id: thisregionId});
+			console.log("getAncestorRegions", thisregion);
+
+			let currentRegion = {_id:thisregion._id, name: thisregion.name};
+			let ancestorArray = [];
+			ancestorArray.push(currentRegion);
+
+			let parentRegionID = thisregion.parentRegion;
+			while(parentRegionID != null){
+				const parentRegionFetched = await Region.findOne({_id: parentRegionID});
+				const ancestorRegionItem = {_id:parentRegionFetched._id, name: parentRegionFetched.name};
+				console.log("in get parent loop: ", ancestorRegionItem)
+				ancestorArray.push(ancestorRegionItem);
+				parentRegionID = parentRegionFetched.parentRegion;
+			}
+			// ancestorArray.reverse()
+			console.log("getAncestorRegions", ancestorArray);
+			return ancestorArray;
 		}
 	},
 	Mutation: {

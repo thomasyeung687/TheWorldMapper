@@ -3,6 +3,7 @@ import './css/layout.scss';
 import './css/maps.scss';
 import './css/spreadsheet.scss';
 import './css/regionViewer.scss';
+import './css/nav.scss';
 import React 	from 'react';
 import ReactDOM from 'react-dom';
 import App 		from './App';
