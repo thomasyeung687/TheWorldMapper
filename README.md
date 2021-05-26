@@ -1,25 +1,16 @@
-# CSE316-Spring21-HW3
-##### Authors: Justin Fagan and Charlie Monnone
+# TheWorldMapper
+##### Authors: Thomas Yeung
+
+### What is this application?
+The World Data Mapper is an application for managing regional data that is organized hierarchically. The application will allow the user to organize and edit hierarchical
+regions. Note a subregion denotes a region that is contained within its parent. A sibling would have the same parent but no overlap with another sibling. So, for example, Alabama and Alaska have the same parent, the USA, so they are siblings. In this application we can organize this data and edit information about each region’s name, capital, leader, and landmarks.
+
 ### Getting Started
 ##### Configuring .env
-NOTE: In a full production application, an environment file would not be stored in a git repository. This file contains information vital to the security of the application, and should not be publicly available. For the sake of ease/learning, this .env is included in the repository, but do not do this in general.
-
 The backend utilizes a .env file to store a few constants which are necessary for the application to function. Some of that information is already there, such as the port numbers for the front and backend servers, as well as the client URL. The refresh and access token secrets are random character sequences used to sign and verify JWTs used by the authentication system. These are essentially passwords that the JWT middleware uses to hash login info, to both save new users and to verify returning ones. Use a site like https://passwordsgenerator.net/, or just come up with a random string yourself for these values. There isn't a hard length requirement on the secret, but smaller keys are more easy to guess by malicious actors, so 32 characters(256 bits) are recommended.
 
-The Mongo URI requires a bit more setup. 
-1. First create a MongoDB account: https://account.mongodb.com/account/login. 
-2. Once you are logged in, click "Create an Organization". Name it whatever you like, make sure MongoDB Atlas is selected, and create the organization(don't worry about adding members). 
-3. Create a new project.
-4. Create a new cluster(choose the free tier). The default provider/region settings should be fine, so click "create cluster", and wait for it to be created( it may take a few minutes).
-5. Once your cluster is finished configuring, click on "Connect". Add your IP and set up a database user.
-6. Click "choose a connection method", and then select the middle option, "Connect your application".
-7. Choose Node.js and version 3.6 or later, if they are not already selected. Eeplace \<password>(including the angle brackets) with your password for the database user, replace```myFirstDatabase``` with the database name(which we called TodoTracker) and paste the string into your .env file. It should look something like this:`MONGO_URI = "mongodb+srv....`
-8. On the MongoDB Atlas page, click "Collections", and then "Create Database". Enter both fields exactly as follows: ```Database Name: TodoTracker``` ```Collection Name: users```. Then click "Create".
-9. Click the "plus" button next to the name of your database(which should be TodoTracker), and create another collection like : ```Collection Name: todolists``` 
-10. On the left sidebar, click "Network Access" under security. Click "Add IP Address", and select your own. This last step shouldn't be necessary, but if you experience fetch/network issues during setup, adding your IP and 0.0.0.0 (allow from anywhere) are worth trying.   
-
 ##### Installing Modules
-Before working with TodoTracker, make sure Node.js is installed on your machine (https://nodejs.org/en/). Either clone or download this git repository. In the TodoTracker folder complete the following steps:
+Before trying to run TheWorldMapper, make sure Node.js is installed on your machine (https://nodejs.org/en/). Either clone or download this git repository. In the TheWorldMapper folder complete the following steps:
 * In the root directory run ```npm install```
 * Go to the client directory(./client) using ```cd client``` and run ```npm install``` again.
 * Return to the root directory using ```cd ..```
@@ -29,7 +20,7 @@ You now have everything you need to start the application, and there are two opt
 * Run ```npm start``` in the root directory
 * Run ```nodemon``` in the root directory and in a separate terminal, run ```npm start``` in the client directory
 
-Generally option 1 is the preferred method as it is more convenient than manually running two separate scripts, but depending on what you’re working on, having both the front and back end servers running separately may help to verify information/better catch a bug.
+Generally option 1 should be used. Option 2 is more for debuggin purposes
 
 ### Backend
 ##### Index and Server-Config
@@ -37,7 +28,7 @@ Index.js is the main entry point for the backend; it handles the creation of the
 
 In this example application, enough middleware code exists to the point where index.js would become difficult to parse, so for the sake of retaining a simplified overview of the server, much of the middleware setup is handled in server-config.js, including the validation of refresh and access tokens.
 
-The backend used by TodoTracker is actually two servers: Apollo Server, which is a GraphQL server, and an ExpressJS server. We do this so that we can combine the mature ecosystem of middleware written for Express with the simplicity of a GraphQL server. Much of the middleware we use is applied to the Express server, and we use Apollo\'s official Express integration to treat the Express server as middleware for the Apollo Server. GraphQL queries and mutations define the types of requests we can make to the Apollo Server, and resolvers(which are ordinary javascript functions) define how to satisfy those requests.
+The backend used by TheWorldMapper is actually two servers: Apollo Server, which is a GraphQL server, and an ExpressJS server. We do this so that we can combine the mature ecosystem of middleware written for Express with the simplicity of a GraphQL server. Much of the middleware we use is applied to the Express server, and we use Apollo\'s official Express integration to treat the Express server as middleware for the Apollo Server. GraphQL queries and mutations define the types of requests we can make to the Apollo Server, and resolvers(which are ordinary javascript functions) define how to satisfy those requests. 
 
 ##### Tokens 
 The application platform utilizes a JSON Web Token(JWT) based system for authentication. Tokens.js handles the generation of access and refresh tokens, which are stored cookies that the server is able to parse. Upon each request to the server, a middleware function(defined in server-config.js) looks for both the access and refresh tokens. Depending on the server request, invalid or missing tokens imply specific situations: 
@@ -47,7 +38,7 @@ The application platform utilizes a JSON Web Token(JWT) based system for authent
 Invalid/missing access and refresh tokens could also mean the user has never logged in; depending on the circumstance, the server middleware will either generate missing tokens or refuse the request.
 
 ##### Models
-The model files define the schema used for the database. TodoTracker uses MongoDB along with Mongoose as an Object Document Mapper(ODM).
+The model files define the schema used for the database. TheWorldMapper uses MongoDB along with Mongoose as an Object Document Mapper(ODM).
 
 ##### TypeDefs
 The typedef files are where all GraphQL types, queries, and mutations used by the backend are defined. Queries and mutations describe requests and operations for a data source, which, in our case, is a MongoDB database. Queries and mutations also require matching functions that fulfill requests. You can think of GraphQL as an abstract description of a request: get me a todolist, update this todolist, etc., which is then implemented by a function. Using GraphQL as an abstraction layer, we  could swap out the implementation of any given request without having to touch any other part of our service. Apollo refers to these functions as resolvers. 
@@ -81,7 +72,7 @@ The Cache folder holds the frontend\'s GraphQL related code. These queries and m
 The Components folder holds React components. A full explanation of the React library is beyond the scope of the document, and would be a poorer explanation than that provided by the official documentation.
 
 ##### Utils
-The utils folder is a bit subjective; it is intended to hold javascript code that does not explicitly deal with React or Apollo Client. For TodoTracker, the undo/redo system is defined in utils. 
+The utils folder is a bit subjective; it is intended to hold javascript code that does not explicitly deal with React or Apollo Client. For TheWorldMapper, the undo/redo system is defined in utils. 
 #
 #### CSS
 All CSS files should go in this folder. To editorialize a bit: separating css layout and style attributes into separate css files makes tweaking either easy without unintentionally breaking something, at the cost of potentially defining a selector in two places.
@@ -98,88 +89,103 @@ In the models directory you should be setting up the database using mongoose as 
 
 ```javascript
 const { model, Schema, ObjectId } = require('mongoose');
-const Item = require('./item-model').schema;
 
-const todolistSchema = new Schema(
+const regionSchema = new Schema(
 	{
 		_id: {
 			type: ObjectId,
-			required: true
-		},
-		id: {
-			type: Number,
-			required: true
-		},
-		name: {
-			type: String,
 			required: true
 		},
 		owner: {
 			type: String,
 			required: true
 		},
-		items: [Item],
+		name: {
+			type: String,
+			required: true
+		},
+		capital:{
+			type: String,
+			required: true
+		},
+		leader:{
+			type: String,
+			required: true
+		},
+		parentRegion: String,
+		subregions: [String],
+		landmarks: [String]
 	},
 	{ timestamps: true }
 );
 
-const Todolist = model('Todolist', todolistSchema);
-module.exports = Todolist;
+const Region = model('Region', regionSchema);
+module.exports = Region;
 ```
 An important thing to note is that when you are designing the GraphQL typedefs you must keep your models and typedefs in sync otherwise you'll eventually run into an error. Similar to creating database models, you should separate your typedefs based on the database models and the associated functions/resolvers you would use with them.
 ```javascript
-// ./typedefs/todolists-def.js
-
 const { gql } = require('apollo-server');
 
+
 const typeDefs = gql `
-	type Todolist {
+	type Region {
 		_id: String!
-		id: Int!
+		owner: String
 		name: String!
-		owner: String!
-		items: [Item]
+		capital: String!
+		leader: String!
+		parentRegion: String
+		subregions: [String]
+		landmarks: [String]
 	}
-	type Item {
+	type RegionWRegionObj {
 		_id: String!
-		id: Int!
-		description: String!
-		due_date: String!
-		assigned_to: String!
-		completed:  Boolean!
+		owner: String
+		name: String!
+		capital: String!
+		leader: String!
+		parentRegion: String
+		subregions: [Region]
+		landmarks: [String]
 	}
 	extend type Query {
-		getAllTodos: [Todolist]
-		getTodoById(_id: String!): Todolist 
+		getAllMaps: [Region]
+		getRegionById(_id: String!): Region
+		getAllChildren(subregionIds: [String]): [Region]
+
+		getAllRegionAbove(_id: String!): [Region]
+		getAllLandmarks(_id: String!): [String]
+
+		getAncestorRegions(_id: String!): [AncestorRegion]
 	}
 	extend type Mutation {
-		addItem(item: ItemInput!, _id: String!): String
-		addTodolist(todolist: TodoInput!): String
-		deleteItem(itemId: String!, _id: String!): [Item]		
-		deleteTodolist(_id: String!): Boolean
-		updateTodolistField(_id: String!, field: String!, value: String!): String
-		updateItemField(itemId: String!, _id: String!, field: String!, value: String!, flag: Int!): [Item]
-		reorderItems(itemId: String!, _id: String!, direction: Int!): [Item]
+		addMap(map: RegionInput!): String
+		deleteMap(_id: String!): Boolean
+		updateMapName(_id: String!, value: String!): String
+
+		addRegion(region: RegionInput!): Region
+		deleteRegion(_id: String!, childID: String!): Region
+		updateRegionField(_id: String!, field: String!, value: String!): Boolean
+		
+		updateSubregionArray(_id: String!, subregionsArr: [String]):Region
+		updateRegionLandmarks(_id: String!, landmark: String!, opcode: String!, newLandmark: String!): Boolean
+		updateRegionParent(_id: String!, parentId: String!): Boolean
 	}
-	input FieldInput {
+	
+	input RegionInput {
 		_id: String
-		field: String
-		value: String
-	}
-	input TodoInput {
-		_id: String
-		id: Int
-		name: String
 		owner: String
-		items: [ItemInput]
+		name: String
+		capital: String
+		leader: String
+		parentRegion: String
+		subregions: [String]
+		landmarks: [String]
 	}
-	input ItemInput {
-		_id: String
-		id: Int
-		description: String
-		due_date: String
-		assigned_to: String
-		completed:  Boolean
+
+	type AncestorRegion {
+		_id: String!
+		name: String!
 	}
 `;
 
@@ -189,16 +195,17 @@ module.exports = { typeDefs: typeDefs }
 
 ```bash
 |--models
-|   |-- User.js
-|   |-- Todolist.js
+|   |-- user-model.js
+|   |-- region-model.js
+|   |-- map-model.js
 |--typedefs
-|   |-- userTypedefs.js
-|   |-- todolistTypedefs.js
-|   |-- rootTypedefs.js #Merge the files here
+|   |-- user-def.js
+|   |-- mao-def.js
+|   |-- root-def.js #Merge the files here
 |--resolvers
-|   |-- userResolvers.js
-|   |-- todolistResolvers.js
-|   |-- rootResolvers.js #Merge the files here
+|   |-- map-resolvers.js
+|   |-- user-resolvers.js
+|   |-- root-resolvers.js #Merge the files here
 ```
 
 ### Resolvers are Controllers
