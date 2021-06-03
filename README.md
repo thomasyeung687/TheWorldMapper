@@ -142,8 +142,6 @@ In this example application, enough middleware code exists to the point where in
 
 The backend used by TheWorldMapper is actually two servers: Apollo Server, which is a GraphQL server, and an ExpressJS server. We do this so that we can combine the mature ecosystem of middleware written for Express with the simplicity of a GraphQL server. Much of the middleware we use is applied to the Express server, and we use Apollo\'s official Express integration to treat the Express server as middleware for the Apollo Server. GraphQL queries and mutations define the types of requests we can make to the Apollo Server, and resolvers(which are ordinary javascript functions) define how to satisfy those requests.
 
-##### Tokens
-
 The application platform utilizes a JSON Web Token(JWT) based system for authentication. Tokens.js handles the generation of access and refresh tokens, which are stored cookies that the server is able to parse. Upon each request to the server, a middleware function(defined in server-config.js) looks for both the access and refresh tokens. Depending on the server request, invalid or missing tokens imply specific situations:
 
 - A valid access token means the user is logged in.
