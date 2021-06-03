@@ -53,7 +53,7 @@ const MapsScreen = (props) => {
 
     
     return (
-        <div className="mainContainer">
+        <div className="mapMainContainer">
             <div className="yourMapsContainer">
                 <div className="yourMapsContainerHeader">
                     <h1 style={{color: "white"}}>Welcome to your maps</h1>

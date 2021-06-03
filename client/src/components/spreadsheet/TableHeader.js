@@ -6,27 +6,25 @@ import { WButton, WRow, WCol } from 'wt-frontend';
 
 const TableHeader = (props) => {
     
+    //Fool proof stying for undo redo
     const undoButtonStyle = props.undoSize() === 0 ? 'SS-header-button-disabled ' : 'SS-header-section SS-header-button ';
     const redoButtonStyle = props.redoSize() === 0 ? 'SS-header-button-disabled ' : 'SS-header-section SS-header-button ';
-    
     const hoverUndo = props.undoSize() === 0 ? 'transparent' : 'lighten';
     const hoverRedo = props.redoSize() === 0 ? 'transparent' : 'lighten';
 
-    const clickDisabled = () => { };
-    const SortListItems = props.SortListItems;
-
+    /** for trouble shooting transactions */
     // console.log('redo transactions:' + props.redoSize());
     // console.log(redoButtonStyle);
 
     // console.log('undo transactions:' + props.undoSize());
     // console.log(undoButtonStyle);
 
+    const clickDisabled = () => { };
+
     const handleUndo = async () =>{
         if (props.undoSize() === 0){
-            // console.log("undo clicked disabled")
             clickDisabled();
         }else{
-            // console.log("undo clicked")
             props.undo();
             await props.refetchRegion();
             await props.refetchChildrenFunc();
@@ -35,10 +33,8 @@ const TableHeader = (props) => {
 
     const handleRedo = async () =>{
         if (props.redoSize() === 0){
-            // console.log("redo clicked disabled")
             clickDisabled();
         }else{
-            // console.log("redo clicked")
             props.redo();
             await props.refetchRegion();
             await props.refetchChildrenFunc();
@@ -82,23 +78,23 @@ const TableHeader = (props) => {
         </WRow>
         <WRow className="SStable-header">
             <WCol size="2">
-                <WButton className='SS-header-section' wType="texted" onClick={()=>{handleSortRegions("name")}}>Name <i className="material-icons">arrow_downward</i></WButton>
+                <WButton className='SS-header-section' wType="texted" onClick={()=>{props.subregions.length && handleSortRegions("name")}}>Name <i className="material-icons">arrow_downward</i></WButton>
             </WCol>
 
             <WCol size="2">
-                <WButton className='SS-header-section' wType="texted" onClick={()=>{handleSortRegions("capital")}}>Capital <i className="material-icons">arrow_downward</i></WButton>
+                <WButton className='SS-header-section' wType="texted" onClick={()=>{props.subregions.length && handleSortRegions("capital")}}>Capital <i className="material-icons">arrow_downward</i></WButton>
             </WCol>
 
             <WCol size="2">
-                <WButton className='SS-header-section' wType="texted" onClick={()=>{handleSortRegions("leader")}}>Leader <i className="material-icons">arrow_downward</i></WButton>
+                <WButton className='SS-header-section' wType="texted" onClick={()=>{props.subregions.length && handleSortRegions("leader")}}>Leader <i className="material-icons">arrow_downward</i></WButton>
             </WCol>
 
             <WCol size="2">
-                <WButton className='SS-header-section' wType="texted" >Flag <i className="material-icons">arrow_downward</i></WButton>
+                <WButton className='SS-header-section' wType="texted" >Flag </WButton>
             </WCol>
 
-            <WCol size="4">
-                <WButton className='SS-header-section' wType="texted" >Landmarks <i className="material-icons">arrow_downward</i></WButton>
+            <WCol size="3">
+                <WButton className='SS-header-section' wType="texted" >Landmarks </WButton>
             </WCol>
         </WRow>
         </>

@@ -1,34 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { WButton, WInput, WRow, WCol } from 'wt-frontend';
-import { useQuery, useLazyQuery } 	from '@apollo/client';
 import DeleteModal from '../modals/DeleteModal'
-import * as queries 	from '../../cache/queries';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 
-// useeffect [] queries no useeffect between.
-    //table contents
-    //whther onchange rran first or onblur ran first. 
-    //onblur click off unfocus, call unblur when moving arrow key. doesnt work. recognize the arrowkey first.
-    //onkeydown onkeyup. props. input class. onblur="" onkeydown="down"
-
-    // if(editingLeader == false && props.editTracker == [props.index, 2] ){
-    //     console.log("here5")
-    //     props.updateEditTracker([]);
-    // }else if(editingLeader == true && props.editTracker == []){
-    //     console.log("here2")
-    //     props.updateEditTracker([props.index, 2]);
-    // }    
 const TableEntry = (props) => {
 
     const [showDeleteRegion, toggleShowDeleteRegion] = useState(false);
-    
     const [editingName, toggleNameEdit] = useState(false);
     const [editingCapital, toggleCapitalEdit] = useState(false);
     const [editingLeader, toggleLeaderEdit] = useState(false);
-    // console.log(showDeleteRegion);
-    
+
     let edittracker = props.editTracker;
-    // console.log(props.editTracker);
+    const region = props.thisRegion;
+
+    //Allows user to traverse fields in regionSpreadsheet using arrow keys
     useEffect(() => {
         console.log("in useeffect")
         if(edittracker[0] === props.index){
@@ -60,30 +44,23 @@ const TableEntry = (props) => {
         toggleLeaderEdit(!editingLeader);
         props.updateEditTracker([props.index, 2])
     }
+
+    /**For Troubleshooting */
     // console.log("type",typeof props.index,typeof props.editNameBool,typeof props.editCapitalBool,typeof props.editLeaderBool)
     // console.log("props", props.editTracker, props.index, props.editNameBool, props.editCapitalBool, props.editLeaderBool)
     // console.log("state", props.index, editingName, editingCapital, editingLeader)
 
-
-    const region = props.thisRegion;
-
     const setActiveHelperFunction = async() => {
 		props.setActiveRegion(region);
     }
-    // refetch();
-
-    // console.log(region)
 
     const name = region ? region.name : "Nan";
     const capital = region ? region.capital : "Nan";
     const leader = region ? region.leader : "Nan";
     let landmarks = region ? region.landmarks.length == 0 ? "Add Landmarks" : region.landmarks : "Nan";
- 
-    // console.log(landmarks)
-
-
-
     
+
+    /**Edit functions */
     const handleNameEdit = async (e) => {
         toggleNameEditfunc()
         const newName = e.target.value ? e.target.value : 'No Name';
@@ -152,6 +129,8 @@ const TableEntry = (props) => {
         }
     }
 
+
+    /**Enables double click functionality on the region name field */
     let timer = 0;
     let delay = 300;
     let prevent = false;
@@ -210,10 +189,8 @@ const TableEntry = (props) => {
                         <div className="SStableTextWrapper" 
                         onDoubleClick={handleDoubleClick} 
                         onClick={handleClick}>
-                            <div className="SStableText"
-                                // onClick={() => toggleNameEdit(!editingName)}
-                                
-                            >{name}
+                            <div className="SStableText">
+                                {name}
                             </div>
                         </div>
                 }
@@ -228,10 +205,13 @@ const TableEntry = (props) => {
                         autoFocus={true} defaultValue={capital} type='text'
                         wType="outlined" barAnimation="solid" inputClass="table-input-class"
                     />
-                        : <div className="SStableText"
-                            onClick={toggleCapitalEditfunc}
-                        >{capital}
+                        : 
+                        <div className="SStableTextWrapper" onClick={toggleCapitalEditfunc}>
+                            <div className="SStableText">
+                                {capital}
+                            </div>
                         </div>
+                        
                 }
             </WCol>
 

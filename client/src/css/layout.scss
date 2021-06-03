@@ -121,6 +121,11 @@ html {
 
 .sidebar-buttons {
   padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
 }
 
 .modal-input {
@@ -176,6 +181,10 @@ html {
 .table-input,
 .table-select {
   width: 100%;
+}
+
+.list-item-edit {
+  color: gray;
 }
 
 .list-item-edit-input {

@@ -103,18 +103,19 @@
   text-align: center;
   border-right: black;
   border-width: 2px;
+  margin-top: 2px;
 }
 
 .SStableTextWrapper {
-  width: 100%;
-  height: 100%;
+  width: 100% !important;
+  height: 100% !important;
   cursor: pointer;
 }
 
 .SStableText:hover {
   transition: 0.1s ease-in-out;
   cursor: pointer;
-  background-color: silver;
+  background-color: rgb(160, 144, 144);
 }
 
 .SSNameColumn {

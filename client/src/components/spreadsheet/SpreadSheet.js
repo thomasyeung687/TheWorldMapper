@@ -10,33 +10,30 @@ import {GET_ALL_CHILDREN_REGIONS} from '../../cache/queries'
 
 
 const MainContents = (props) => {
-    // console.log("activeRegion", props.activeRegion);
     const [AddRegion] = useMutation(mutations.ADD_REGION);
     const {loading, error, data, refetch} = useQuery(GET_DB_REGION_BY_ID, {variables: {_id: props.activeRegionId}});
-    // const [region, setRegion] = useState(data ? data.getRegionById : null);
-    // console.log(data.getRegionById);
+
     let region = data ? data.getRegionById : null
     const refetchRegion = async () =>{
-        console.log("refetchRegion")
         await refetch()
         const {data} = await refetch();
-        if(data) { 
-            // console.log(data);
+        if(data) {
             let { getRegionById } = data;
             if(getRegionById !== null) { region = getRegionById; }
         }
-        console.log("refetched", region);
+        // console.log("refetched", region);
     }
 
     let subregionsIds = region ? region.subregions : null;
-    // console.log(subregionsIds);
+    
     const {loading:loadingChildren, error:errorChildren, data:dataChildren, refetch:refetchChildren} = useQuery(GET_ALL_CHILDREN_REGIONS, 
         {skip: !subregionsIds, variables: {subregionIds: subregionsIds}})
     let subregions = dataChildren ? dataChildren.getAllChildren : [];
     
+    /**For Troubleshooting */
     // console.log(region);
     // console.log(subregions);
-    console.log(props.undoSize(), props.redoSize());
+    // console.log(props.undoSize(), props.redoSize());
 
     const refetchChildrenFunc = async () => {
         const {data} = await refetchChildren();
@@ -71,8 +68,6 @@ const MainContents = (props) => {
 
                     refetchRegion = {refetchRegion}
                     refetchChildrenFunc = {refetchChildrenFunc}
-                    // deleteItem={props.deleteItem} reorderItem={props.reorderItem}
-                    // editItem={props.editItem}
                 />
             </div>
         </div>
